@@ -19,12 +19,12 @@ const HowItWorks = () => {
           <Cards
             icon={<AiOutlineEye />}
             title="Preview Module"
-            desc="Find the module you need from our vast collection of modules"
+            desc="Click on a module of your choice to open a preview of the module"
           />
           <Cards
             icon={<BsCloudDownload />}
             title="Download Module"
-            desc="Find the module you need from our vast collection of modules"
+            desc="Click on the download button to download any module of your choice"
           />
         </div>
       </div>
@@ -45,7 +45,7 @@ const Cards = ({ title, desc, icon }) => {
 
         <div className="w-[25px] h-[4px] rounded-full bg-green-600"></div>
       </div>
-      <div className="text-sm px-10 py-3 text-slate-400">{desc}</div>
+      <div className="text-sm px-4 sm:px-10 py-3 text-slate-400">{desc}</div>
     </div>
   );
 };

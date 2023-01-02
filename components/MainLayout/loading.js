@@ -1,7 +1,7 @@
 import React from "react";
-import FullScreenLoader from "../components/Loader/FullLoader";
+import FullScreenLoader from "../Loader/FullLoader";
 
-const loading = () => {
+const LoadingScreen = () => {
   return (
     <div className="w-full flex justify-center items-center">
       <FullScreenLoader />
@@ -9,4 +9,4 @@ const loading = () => {
   );
 };
 
-export default loading;
+export default LoadingScreen;

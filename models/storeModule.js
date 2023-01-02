@@ -12,4 +12,4 @@ const storeModuleTemplate = mongoose.Schema({
 });
 
 module.exports =
-  mongoose.models.files || mongoose.model("files", storeModuleTemplate);
+  mongoose.models?.files || mongoose.model("files", storeModuleTemplate);

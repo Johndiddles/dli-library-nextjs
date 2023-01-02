@@ -1,10 +1,7 @@
 import "../styles/globals.css";
 
 import { Montserrat, Raleway } from "@next/font/google";
-import Header from "../components/Header/Header";
-import MainLayout from "../components/MainLayout/MainLayout";
-import { useEffect } from "react";
-import connectDB from "../db/connect";
+import MainLayout from "../components/MainLayout/layout";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -16,7 +13,6 @@ const raleway = Raleway({
   variable: "--font-raleway",
 });
 
-// connectDB();
 export default function App({ Component, pageProps }) {
   return (
     <MainLayout>

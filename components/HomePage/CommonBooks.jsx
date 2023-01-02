@@ -1,8 +1,7 @@
 import React from "react";
 import SingleBook from "./SingleBook";
 
-const CommonBooks = ({ books }) => {
-  // console.log({ books });
+const CommonBooks = ({ books, files }) => {
   return (
     <div className="w-screen">
       <div className="w-full flex flex-col gap-10 items-center py-8 px-8 lg:px-24 bg-gray-100">
@@ -12,7 +11,11 @@ const CommonBooks = ({ books }) => {
 
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-between items-center w-full py-5">
           {books?.slice(0, 3)?.map((book) => (
-            <SingleBook key={book?.id} book={book} />
+            <SingleBook
+              key={book?.id}
+              book={book}
+              file={files.find((file) => file?.id === book?.id)}
+            />
           ))}
         </div>
       </div>

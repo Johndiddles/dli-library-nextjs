@@ -28,4 +28,4 @@ const moduleTemplate = new mongoose.Schema({
 });
 
 module.exports =
-  mongoose.models.modules || mongoose.model("modules", moduleTemplate);
+  mongoose.models?.modules || mongoose.model("modules", moduleTemplate);

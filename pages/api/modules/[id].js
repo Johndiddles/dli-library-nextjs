@@ -1,5 +1,11 @@
 const storeModuleTemplateCopy = require("../../../models/storeModule");
 
+export const config = {
+  api: {
+    responseLimit: false,
+  },
+};
+
 export default function handler(req, res) {
   const { method } = req;
 
