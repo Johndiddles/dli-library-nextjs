@@ -5,6 +5,9 @@ const nextConfig = {
   // future: {
   //   webpack5: true,
   // },
+  images: {
+    unoptimized: true,
+  },
   webpack: (config) => {
     // load worker files as a urls with `file-loader`
     config.module.rules.unshift({
@@ -20,6 +23,7 @@ const nextConfig = {
         },
       ],
     });
+    // config.resolve.fallback = { fs: false, path: false };
 
     return config;
   },

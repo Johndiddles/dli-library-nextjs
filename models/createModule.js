@@ -5,6 +5,10 @@ const moduleTemplate = new mongoose.Schema({
     type: String,
     required: true,
   },
+  filename: {
+    type: String,
+    required: true,
+  },
   courseCode: {
     type: String,
     required: true,

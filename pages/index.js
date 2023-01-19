@@ -5,8 +5,11 @@ import HowItWorks from "../components/HomePage/HowItWorks";
 
 import moduleTemplateCopy, { update } from "../models/createModule";
 import storeModuleTemplateCopy from "../models/storeModule";
+import axios from "axios";
+import { BASE_URL } from "../constants/variables";
 
-const Home = ({ modules, files }) => {
+const Home = ({ modules }) => {
+  console.log({ modules: JSON.parse(modules) });
   return (
     <>
       <Head>
@@ -18,7 +21,7 @@ const Home = ({ modules, files }) => {
       <main className="flex flex-col min-h-screen w-screen">
         <Hero />
         <HowItWorks />
-        <CommonBooks books={JSON.parse(modules)} files={JSON.parse(files)} />
+        <CommonBooks books={JSON.parse(modules)} />
       </main>
     </>
   );
@@ -27,36 +30,14 @@ const Home = ({ modules, files }) => {
 export default Home;
 
 export async function getStaticProps() {
-  const modules = await moduleTemplateCopy.find();
+  const response = await axios.get(`${BASE_URL}/modules/recent`);
 
-  const slicedModules = modules?.slice(0, 3);
-
-  const filesArray = [
-    ...(await storeModuleTemplateCopy.find({
-      id: modules[0]?.id,
-    })),
-
-    ...(await storeModuleTemplateCopy.find({
-      id: modules[1]?.id,
-    })),
-
-    ...(await storeModuleTemplateCopy.find({
-      id: modules[2]?.id,
-    })),
-  ];
-
-  // const files = async () =>
-  //   slicedModules.map(
-  //     async (module) =>
-  //       await storeModuleTemplateCopy.find({
-  //         id: module?.id,
-  //       })
-  //   );
+  const modules = JSON.stringify(response?.data);
+  console.log({ modules });
 
   return {
     props: {
-      modules: JSON.stringify(slicedModules),
-      files: JSON.stringify(filesArray),
+      modules,
     },
   };
 }
