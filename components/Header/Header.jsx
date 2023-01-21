@@ -16,6 +16,9 @@ export default Header;
 const NavbarLink = ({ name, href }) => (
   <Link
     className="hover:text-green-600 font-montserrat font-extrabold hover:scale-110 py-1 duration-300 border-b-2 border-b-transparent uppercase hover:border-green-600"
+    style={{
+      textShadow: "0 2px 4px rgba(0,0,0,1)",
+    }}
     href={href}
   >
     {name}

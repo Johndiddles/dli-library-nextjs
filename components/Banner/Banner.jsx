@@ -8,7 +8,7 @@ const Banner = ({ title, imgUrl }) => {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      className="min-h-[35vh] relative rounded-b-[30px] lg:rounded-b-[60px] overflow-hidden"
+      className="min-h-[25vh] md:min-h-[35vh] relative rounded-b-[30px] lg:rounded-b-[60px] overflow-hidden"
     >
       <div
         style={{

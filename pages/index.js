@@ -9,7 +9,6 @@ import axios from "axios";
 import { BASE_URL } from "../constants/variables";
 
 const Home = ({ modules }) => {
-  console.log({ modules: JSON.parse(modules) });
   return (
     <>
       <Head>
@@ -30,10 +29,9 @@ const Home = ({ modules }) => {
 export default Home;
 
 export async function getStaticProps() {
-  const response = await axios.get(`${BASE_URL}/modules/recent`);
+  const response = await axios.get(`${BASE_URL}/get-recent-modules`);
 
   const modules = JSON.stringify(response?.data);
-  console.log({ modules });
 
   return {
     props: {
