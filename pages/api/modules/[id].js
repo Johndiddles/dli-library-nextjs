@@ -16,7 +16,7 @@ export default function handler(req, res) {
         res.status(200).json(response[0]);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         res.status(404).json({ message: "Module not found" });
       });
   }

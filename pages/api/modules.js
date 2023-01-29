@@ -7,7 +7,7 @@ export default function handler(req, res) {
     moduleTemplateCopy
       .find()
       .then((response) => {
-        console.log({ response });
+        // console.log({ response });
 
         res.status(201).json({
           message: "success",

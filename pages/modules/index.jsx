@@ -1,13 +1,16 @@
+"use client";
+
 import axios from "axios";
 import Head from "next/head";
-import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import React, { useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
 import SingleModule from "../../components/Modules/SingleModule";
 import { BASE_URL } from "../../constants/variables";
-import { AiFillFilter } from "react-icons/ai";
-import { BsSearch } from "react-icons/bs";
+import { BsCaretLeftFill, BsCaretRightFill, BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
+import { MdClear } from "react-icons/md";
+import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 
 const Modules = (props) => {
   const { modules } = props;
@@ -16,23 +19,6 @@ const Modules = (props) => {
   const [search, setSearch] = useState("");
 
   const [filtersOpen, setFiltersOpen] = useState(false);
-
-  const filtersMenuRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (window.innerWidth < 1024 && filtersMenuRef?.current) {
-  //     if (filtersOpen) {
-  //       filtersMenuRef.current.style.display = "flex";
-  //       filtersMenuRef.current.style.transform = "translateX(0)";
-  //       filtersMenuRef.current.style.transitionDelay = "500";
-  //     } else {
-  //       filtersMenuRef.current.style.display = "none";
-  //     }
-  //   } else {
-  //     // setFiltersOpen(true);
-  //     filtersMenuRef.current.style.display = "flex";
-  //   }
-  // }, [filtersOpen]);
 
   const [filters, setFilters] = useReducer(
     (prev, next) => ({
@@ -51,6 +37,38 @@ const Modules = (props) => {
       setActiveMenu(() => menu);
     }
   };
+
+  const clearFilters = () => {
+    setFilters({ department: "", level: "", search: "" });
+    setSearch(() => "");
+  };
+
+  //** PAGINATION AND LIST FILTER **//
+  //** PAGINATION AND LIST FILTER **//
+  const [pagination, setPagination] = useState({
+    listLength: 0,
+    page: 1,
+    pages: 1,
+    pageLength: 10,
+  });
+
+  const pageStart = useMemo(() => {
+    if (pagination?.page === 1) {
+      return 1;
+    } else if (pagination?.page > 1) {
+      return (
+        pagination?.page * pagination?.pageLength - (pagination?.pageLength - 1)
+      );
+    }
+  }, [pagination]);
+
+  const pageEnd = useMemo(() => {
+    if (pagination?.page * pagination?.pageLength > pagination?.listLength) {
+      return pagination?.listLength;
+    } else {
+      return pagination?.page * pagination?.pageLength;
+    }
+  }, [pagination]);
 
   const filteredList = useMemo(() => {
     const list = allModules?.filter(
@@ -72,8 +90,15 @@ const Modules = (props) => {
             ?.includes(filters?.search?.toLowerCase()))
     );
 
+    setPagination((prev) => ({
+      ...prev,
+      listLength: list?.length,
+      pages: Math.ceil(list?.length / prev?.pageLength),
+    }));
     return list;
   }, [allModules, filters]);
+
+  //** END PAGINATION AND LIST FILTER */
 
   return (
     <div className="h-fit flex flex-col">
@@ -609,12 +634,50 @@ const Modules = (props) => {
 
           <div className="flex-grow flex flex-col">
             {/* <div>Maybe some filters here too</div> */}
+            <>
+              {(filters?.department !== "" ||
+                filters?.level !== "" ||
+                filters?.search !== "") && (
+                <div className="mb-2 flex text-sm text-gray-700 text-opacity-80 items-center">
+                  Showing results for{" "}
+                  {filters?.department && `${filters?.department} department, `}
+                  {filters?.level && `${filters?.level} level, `}
+                  {filters?.search && `keyword: ${filters?.search}.`}
+                  <span>
+                    <button
+                      className="border border-gray-100 sm:ml-4 px-2 py-1 text-gray-600 flex gap-1 text-sm font-semibold items-center duration-500 hover:text-gray-100 hover:bg-gray-800 rounded"
+                      onClick={() => clearFilters()}
+                    >
+                      <span>
+                        <MdClear />
+                      </span>
+                      Clear<span className="hidden sm:block"> filters</span>
+                    </button>
+                  </span>
+                </div>
+              )}
+            </>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex flex-col gap-6 w-full">
-              {filteredList?.length > 0 &&
-                filteredList.map((module) => (
-                  <SingleModule key={module?.id} module={module} />
-                ))}
+              {filteredList?.length > 0 ? (
+                filteredList
+                  ?.slice(pageStart - 1, pageEnd)
+                  ?.map((module) => (
+                    <SingleModule key={module?.id} module={module} />
+                  ))
+              ) : (
+                <div>No result found</div>
+              )}
             </div>
+            {/* handling pagination here  */}
+            {/* handling pagination here  */}
+            {/* handling pagination here  */}
+
+            <ClientSidePagination
+              pagination={pagination}
+              setPagination={setPagination}
+              pageStart={pageStart}
+              pageEnd={pageEnd}
+            />
           </div>
         </section>
       </main>

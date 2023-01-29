@@ -39,6 +39,53 @@
   }
 }  */
 
+:root {
+  --toastify-color-warning: #ffffff !important;
+  --toastify-color-success: #ffffff !important;
+  --toastify-color-error: #ffffff !important;
+  --toastify-text-color-success: rgb(22, 163, 74) !important;
+  --toastify-text-color-error: #d82410 !important;
+  --toastify-text-color-warning: #e67818 !important;
+  --toastify-color-progress-success: var(
+    --toastify-text-color-success
+  ) !important;
+  --toastify-color-progress-error: var(--toastify-text-color-error) !important;
+  --toastify-color-progress-warning: var(
+    --toastify-text-color-warning
+  ) !important;
+  --toastify-font-family: "Montserrat", sans-serif !important;
+  --toastify-toast-width: 24rem !important;
+  --toastify-toast-min-height: 3rem !important;
+}
+
+.Toastify__toast-body {
+  margin: auto 0 !important;
+  flex: 1 1 auto !important;
+  padding: 0.25rem 0.375rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Toastify__toast {
+  position: relative !important;
+  min-height: var(--toastify-toast-min-height) !important;
+  box-sizing: border-box !important;
+  margin-bottom: 1rem !important;
+  padding: 0.25rem 1.5rem !important;
+  border-radius: 3.5rem !important;
+  border-top-right-radius: 0 !important;
+  box-shadow: 0 1px 10px 0 rgb(0 0 0 / 10%), 0 2px 15px 0 rgb(0 0 0 / 5%) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  max-height: var(--toastify-toast-max-height) !important;
+  overflow: hidden !important;
+  font-family: var(--toastify-font-family) !important;
+  font-size: 0.925rem !important;
+  font-weight: 400 !important;
+  cursor: pointer !important;
+  direction: ltr !important;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -53,10 +100,27 @@ body {
   background: rgba(248, 248, 248, 0.5);
 }
 
+input {
+  background-color: transparent;
+}
+
 canvas {
   width: 100% !important;
-  height: 100%;
-  max-height: 360px !important;
+  height: auto !important;
+  max-width: 100% !important;
+  /* max-height: 360px !important; */
+}
+
+.react-pdf__Document {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.react-pdf__Page {
+  /* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05); */
+  display: flex;
+  justify-content: center;
 }
 
 /* body {

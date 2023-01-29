@@ -1,21 +1,28 @@
 import Image from "next/image";
-import React, { useState } from "react";
-import styles from "../../styles/SingleModule.module.css";
+import React, { useCallback, useMemo, useState } from "react";
+import styles from "../../styles/SingleModule.module.scss";
 
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaLink } from "react-icons/fa";
 import { BsCloudDownload, BsSearch } from "react-icons/bs";
 import getSingleModule from "../../globalFunctions/getSingleModule";
 
 import moment from "moment";
 import ButtonSpinner from "../Loader/ButtonSpinner";
+import { useRouter } from "next/router";
+import copyLink from "../../globalFunctions/copyModuleLink";
+import { useLoginModalContext } from "../../pages/context/loginModalContext";
+import { useAuthContext } from "../../pages/context/authContext";
+import addFavorites from "../../globalFunctions/addBookToFavorites";
 
 const SingleModule = ({ module }) => {
+  const router = useRouter();
+  const { isAuth, verifyUser, user } = useAuthContext();
+  const { favorite_modules } = user;
+  const { setIsModalOpen } = useLoginModalContext();
   const [downloading, setDownloading] = useState(false);
   const downloadBook = async (id) => {
     setDownloading(true);
-    const { book, error, status, message } = await getSingleModule(id);
-
-    // console.log({ book, error, status, message });
+    const { book, status } = await getSingleModule(id);
 
     if (status === "success") {
       setDownloading(false);
@@ -29,6 +36,36 @@ const SingleModule = ({ module }) => {
       setDownloading(false);
     }
   };
+
+  const isModuleFavorite = useMemo(
+    () => favorite_modules?.includes(module?.id),
+    [favorite_modules, module?.id]
+  );
+
+  const addBookToFavorites = useCallback(() => {
+    const action = async () => {
+      const response = await addFavorites(module?.id);
+
+      if (response?.message === "success") {
+        verifyUser();
+      } else if (response?.message === "unauthorized") {
+        setIsModalOpen((prev) => !prev);
+      } else {
+      }
+    };
+
+    return action();
+  }, [verifyUser, module?.id, setIsModalOpen]);
+
+  const addToFavorites = (e) => {
+    e.preventDefault();
+    if (isAuth) {
+      addBookToFavorites();
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
   return (
     <div
       //   href={`/modules/${module?.id}`}
@@ -54,8 +91,6 @@ const SingleModule = ({ module }) => {
               objectPosition: "top",
             }}
             fill
-            // height={180}
-            // width={320}
           />
         </div>
         <div className={`flex-grow flex ${styles.singleModule__details}`}>
@@ -74,12 +109,28 @@ const SingleModule = ({ module }) => {
             <div
               className={`flex flex-col ${styles.singleModule__actions__fav}`}
             >
-              <div className="flex justify-end text-xl ">
-                <button className="outline-none cursor-pointer duration-300 text-gray-400 hover:text-green-600">
+              <div className="flex gap-4 justify-end text-xl mb-2 ">
+                <button
+                  className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
+                  onClick={() => {
+                    copyLink(module?.id, module?.courseTitle);
+                  }}
+                >
+                  <FaLink />
+                </button>
+                <span className="border-l border-l-gray-200"></span>
+                <button
+                  className={`outline-none cursor-pointer duration-300 ${
+                    isModuleFavorite
+                      ? "text-green-600 hover:text-red-700"
+                      : "text-gray-400 hover:text-green-600"
+                  } `}
+                  onClick={addToFavorites}
+                >
                   <FaHeart />
                 </button>
               </div>
-              <div className="text-xs text-gray-400 text-center">
+              <div className="text-xs text-gray-400 text-center mb-2">
                 Date Added: {moment(module?.date).format("DD MMM YYYY")}
               </div>
             </div>
@@ -97,7 +148,10 @@ const SingleModule = ({ module }) => {
                   <BsCloudDownload />
                 </span>
               </button>
-              <button className="w-full text-center flex items-center gap-4 justify-between py-2 rounded-sm font-semibold text-sm duration-300 border border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+              <button
+                className="w-full text-center flex items-center gap-4 justify-between py-2 rounded-sm font-semibold text-sm duration-300 border border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                onClick={() => router.push(`/modules/${module?.id}`)}
+              >
                 <div className="flex-grow text-center">Preview</div>
                 <span className="border-l border-l-green-600 px-3">
                   <BsSearch />

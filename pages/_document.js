@@ -1,7 +1,7 @@
-import { Html, Head, Main, NextScript } from "next/document";
-import connectDB from "../db/connect";
+"use client";
 
-connectDB();
+import { Html, Head, Main, NextScript } from "next/document";
+
 export default function Document() {
   return (
     <Html lang="en">

@@ -1,0 +1,15 @@
+.form_wrapper {
+  container-type: inline-size;
+  container-name: form;
+}
+
+.form_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  @container form (max-width: 540px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}

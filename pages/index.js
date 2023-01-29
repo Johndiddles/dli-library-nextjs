@@ -1,3 +1,5 @@
+"use client";
+
 import Head from "next/head";
 import Hero from "../components/HomePage/Hero";
 import CommonBooks from "../components/HomePage/CommonBooks";

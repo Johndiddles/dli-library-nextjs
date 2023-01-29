@@ -33,7 +33,7 @@ const Dashboard = () => {
         }
       );
 
-      console.log({ response });
+      // console.log({ response });
 
       if (response?.status === 201) {
         const base64Image = new Buffer.from(
@@ -63,18 +63,18 @@ const Dashboard = () => {
             }
           );
 
-          console.log({ response });
+          // console.log({ response });
 
           if (response?.status === 201) {
             alert(`successfully uploaded ${courseTitle}`);
           }
         } catch (error) {
-          console.log({ error });
+          // console.log({ error });
           alert("failed to upload book ");
         }
       }
     } catch (error) {
-      console.log({ error });
+      // console.log({ error });
     }
   };
 

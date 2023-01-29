@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 // const DocumentViewer = dynamic(() => import("../PDFViewer/DocumentViewer"), {
 //   ssr: false,
@@ -6,7 +7,10 @@ import Image from "next/image";
 
 const SingleBook = ({ book }) => {
   return (
-    <div className="flex flex-col text-[100%] items-center gap-4 shadow pb-8 rounded-3xl text-gray-500 lg:hover:scale-105 hover:shadow-green-600 hover:text-gray-800 duration-500 cursor-pointer w-full overflow-hidden ">
+    <Link
+      href={`/modules/${book?.id}`}
+      className="flex flex-col text-[100%] items-center gap-4 shadow pb-8 rounded-3xl text-gray-500 lg:hover:scale-105 hover:shadow-green-600 hover:text-gray-800 duration-500 cursor-pointer w-full overflow-hidden "
+    >
       <div className="w-full h-[360px] flex justify-center items-center overflow-hidden">
         <div className="w-full h-full relative">
           <Image fill src={book?.thumbnail} alt={book?.courseTitle} />
@@ -21,7 +25,7 @@ const SingleBook = ({ book }) => {
         <span>{book?.courseCode}</span>
         <div>{book?.courseTitle}</div>
       </div>
-    </div>
+    </Link>
   );
 };
 

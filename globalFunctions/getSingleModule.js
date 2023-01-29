@@ -17,14 +17,14 @@ const singleModule = async (id) => {
           message = "Successfully fetched book";
         })
         .catch((error) => {
-          console.log({ error });
+          // console.log({ error });
           status = "failed";
           message = "Could not find book";
         })
     )
 
     .catch((error) => {
-      console.log({ error });
+      // console.log({ error });
       status = "failed";
       message = "Could not find book";
     });

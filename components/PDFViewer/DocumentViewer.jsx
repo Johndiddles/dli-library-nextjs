@@ -1,20 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf/dist/esm/entry.webpack";
 
-import workerSrc from "./pdf-worker";
-
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+pdfjs.GlobalWorkerOptions.workerSrc =
+  "//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.js";
 
 const DocumentViewer = ({ file }) => {
+  const [base64Pdf, setBase64Pdf] = useState("");
+
   const [numPages, setNumPages] = useState(null);
 
   function onDocumentLoadSuccess({ numPages: nextNumPages }) {
     setNumPages(nextNumPages);
   }
+
+  useEffect(() => {
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+    }
+
+    // const fileUrl = window.URL.createObjectURL(file);
+
+    file &&
+      getBase64(file).then((data) => {
+        setBase64Pdf(data);
+      });
+  }, [file]);
+
   return (
-    <div className="w-full" style={{ width: "100%" }}>
-      <Document file={file?.url} onLoadSuccess={onDocumentLoadSuccess}>
-        {Array.from({ length: 1 }, (_, index) => (
+    <div className="w-full" style={{ width: "100%", height: "fit-content" }}>
+      <Document
+        file={base64Pdf}
+        onLoadSuccess={onDocumentLoadSuccess}
+        // onLoadError={(error) => console.log({ error })}
+      >
+        {Array.from({ length: 3 }, (_, index) => (
           <Page
             key={`page_${index + 1}`}
             pageNumber={index + 1}

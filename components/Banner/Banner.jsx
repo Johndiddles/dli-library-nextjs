@@ -21,21 +21,21 @@ const Banner = ({ title, imgUrl }) => {
           style={{
             textShadow: "0 2px 4px rgba(0,0,0,1)",
           }}
-          className="font-montserrat font-bold text-3xl uppercase"
+          className="font-montserrat font-bold text-3xl uppercase text-center"
         >
           <span
             style={{
               textShadow: "0 2px 0px rgba(0,0,0,0.7)",
             }}
             className="text-green-600"
-          >{`<`}</span>
+          ></span>
           {` ${title} `}
           <span
             style={{
               textShadow: "0 2px 0px rgba(0,0,0,0.7)",
             }}
             className="text-green-600"
-          >{`/>`}</span>
+          ></span>
         </div>
       </div>
     </div>

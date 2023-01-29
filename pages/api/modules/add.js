@@ -30,7 +30,6 @@ handler.use(methodOverride("_method"));
 const storage = new GridFsStorage({
   url: process.env.DATABASE_ACCESS,
   file: (req, file) => {
-    console.log({ file });
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
         if (err) {
@@ -44,7 +43,6 @@ const storage = new GridFsStorage({
           bucketName: "modules",
         };
 
-        console.log({ fileInfo });
         resolve(fileInfo);
       });
     });
@@ -58,8 +56,6 @@ const uploadFile = upload.single("module");
 handler.use(uploadFile);
 
 handler.post((req, res) => {
-  console.log({ file: req.file, body: JSON.stringify(req.body) });
-
   const uploadModule = new moduleTemplateCopy({
     id: req.file.id,
     filename: req.file.filename,
@@ -69,12 +65,9 @@ handler.post((req, res) => {
     department: req.body.department,
   });
 
-  console.log({ uploadModule });
-
   uploadModule
     .save()
     .then((data) => {
-      console.log("fileUpload: ", data);
       uploadModule
         .save()
         .then((data) => {

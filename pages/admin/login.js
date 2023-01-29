@@ -1,25 +1,12 @@
-import React, { useState, useEffect } from "react";
-// import { Navigate } from "react-router";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   userLogin,
-//   getLoginStatus,
-//   setStatus,
-//   getIsAuth,
-// } from "../../../redux-toolkit/userSlice/userSlice";
-import axios from "axios";
-import { BASE_URL } from "../../constants/variables";
 import Head from "next/head";
 import Banner from "../../components/Banner/Banner";
-// import "./login.styles.scss";
+import { useAuthContext } from "../context/authContext";
 
 const AdminLogin = () => {
-  //   const dispatch = useDispatch();
+  const { login } = useAuthContext();
   const router = useRouter();
-
-  //   const loginStatus = useSelector(getLoginStatus);
-  //   const isAuth = useSelector(getIsAuth);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -33,39 +20,18 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // dispatch(setStatus("idle"));
     const data = {
       username,
       password,
     };
-    // dispatch(userLogin(data));
 
-    try {
-      const response = await axios.post(`${BASE_URL}/user/login`, data);
+    const next = async () => {
+      clearInputs();
+      await router.push("/admin/dashboard");
+    };
 
-      if (response?.status === 201) {
-        console.log({ response: response?.data });
-        localStorage.setItem("token", response?.data?.data?.token);
-        clearInputs();
-        router.push("/admin/dashboard");
-      }
-    } catch (error) {
-      console.log({ error });
-    }
+    login(data, next);
   };
-
-  //   useEffect(() => {
-  //     if (loginStatus === "idle") {
-  //       setSubmitButtonContent("Login");
-  //     } else if (loginStatus === "pending") {
-  //       setSubmitButtonContent("Please wait");
-  //     } else if (loginStatus === "failed") {
-  //       setSubmitButtonContent("Login");
-  //     } else if (loginStatus === "succeeded") {
-  //       console.log("successful");
-  //       setSubmitButtonContent("Login");
-  //     }
-  //   }, [loginStatus]);
 
   return (
     <div className="h-fit flex flex-col">
