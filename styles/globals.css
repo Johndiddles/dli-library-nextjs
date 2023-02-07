@@ -1,6 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -56,6 +58,10 @@
   --toastify-font-family: "Montserrat", sans-serif !important;
   --toastify-toast-width: 24rem !important;
   --toastify-toast-min-height: 3rem !important;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-raleway: "Raleway", sans-serif;
+  --font-lato: "Lato", monospace;
+  --font-cinzel: "Cinzel", serif;
 }
 
 .Toastify__toast-body {

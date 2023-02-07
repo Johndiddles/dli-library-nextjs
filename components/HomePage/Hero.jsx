@@ -27,12 +27,6 @@ const Hero = () => {
             Find Modules
           </button>
         </div>
-
-        {/* <div className="w-1/2">
-          <div className="w-[500px] height-[500px] rounded-full overflow-hidden flex justify-center items-center">
-            <Image src={heroImage} alt="" height={500} width={500} />
-          </div>
-        </div> */}
       </div>
     </section>
   );

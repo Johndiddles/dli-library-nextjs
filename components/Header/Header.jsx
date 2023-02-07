@@ -1,26 +1,36 @@
 import Link from "next/link";
-import React from "react";
+import React, { useRef, useState } from "react";
+import { AiOutlineClose } from "react-icons/ai";
+import { FaBars } from "react-icons/fa";
+import BrandAndLogo from "./BrandAndLogo";
+import MobileNavigation from "./MobileNavigation";
+import Navigation from "./Navigation";
+import NavProfile from "./NavProfile";
 
 const Header = () => {
+  const [openNav, setOpenNav] = useState(false);
+  const mobileNavRef = useRef(null);
+  const toggleNavbar = () => setOpenNav((prev) => !prev);
   return (
-    <div className="bg-transparent absolute top-0 left-0 w-screen py-6 px-8 shadow-sm z-20 text-gray-300 flex justify-center items-center gap-12">
-      <NavbarLink name="Home" href="/" />
-      <NavbarLink name="About" href="/about" />
-      <NavbarLink name="Modules" href="/modules" />
+    <div className="bg-transparent absolute top-0 left-0 w-screen py-2 px-8 shadow-sm z-20 text-gray-300 flex justify-between items-center gap-12">
+      <div>
+        <BrandAndLogo />
+      </div>
+
+      <div className="flex-grow hidden sm:flex justify-end items-center gap-10">
+        <Navigation />
+        <NavProfile />
+      </div>
+
+      <MobileNavigation toggleNavbar={toggleNavbar} openNav={openNav} />
+
+      <div className="sm:hidden">
+        <button onClick={toggleNavbar}>
+          <FaBars />
+        </button>
+      </div>
     </div>
   );
 };
 
 export default Header;
-
-const NavbarLink = ({ name, href }) => (
-  <Link
-    className="hover:text-green-600 font-montserrat font-extrabold hover:scale-110 py-1 duration-300 border-b-2 border-b-transparent uppercase hover:border-green-600"
-    style={{
-      textShadow: "0 2px 4px rgba(0,0,0,1)",
-    }}
-    href={href}
-  >
-    {name}
-  </Link>
-);

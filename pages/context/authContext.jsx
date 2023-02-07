@@ -71,6 +71,8 @@ const AuthContextProvider = ({ children }) => {
     setIsAuth(false);
     setUser({});
     setToken("");
+    localStorage.clear();
+    toast.success("Logged out successfully");
   };
 
   const verifyUser = useCallback(() => {

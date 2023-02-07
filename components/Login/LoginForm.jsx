@@ -41,7 +41,10 @@ const LoginForm = () => {
             className="outline-none flex-grow"
             value={details?.username}
             onChange={(e) =>
-              setDetails((prev) => ({ ...prev, username: e.target.value }))
+              setDetails((prev) => ({
+                ...prev,
+                username: e.target.value?.toLowerCase(),
+              }))
             }
             type="text"
             placeholder="Email or Phone"
