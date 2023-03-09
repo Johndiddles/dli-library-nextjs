@@ -38,7 +38,9 @@ const AuthContextProvider = ({ children }) => {
     } catch (error) {
       // console.log({ error });
       setSignupStatus("failed");
-      toast.error("Unable to complete your request at the moment.");
+      if (error?.response?.status === 400) {
+        toast.error(error?.response?.data?.message);
+      } else toast.error("Unable to complete your request at the moment.");
     }
   };
 

@@ -13,10 +13,10 @@ const SignupForm = () => {
   const { signup } = useAuthContext();
   const [details, setDetails] = useState({
     first_name: "",
-    last_name: "",
+    // last_name: "",
     password: "",
     email: "",
-    phone: "",
+    // phone: "",
     confirm_password: "",
   });
 
@@ -60,21 +60,22 @@ const SignupForm = () => {
           </div>
           <div className="flex gap-4 items-center py-2 px-4 border-b border-b-gray-300 ">
             <label>
-              <FaUser />
+              <HiMail />
             </label>
             <input
-              className="outline-none flex-grow capitalize"
-              value={details?.last_name}
+              className="outline-none flex-grow"
+              value={details?.email}
               onChange={(e) =>
-                setDetails((prev) => ({ ...prev, last_name: e.target.value }))
+                setDetails((prev) => ({ ...prev, email: e.target.value }))
               }
-              type="text"
-              placeholder="Last Name"
+              type="email"
+              placeholder="Email"
+              required
             />
           </div>
         </div>
 
-        <div className={`${styles.form_row}`}>
+        {/* <div className={`${styles.form_row}`}>
           <div className="flex gap-4 items-center py-2 px-4 border-b border-b-gray-300 ">
             <label>
               <HiPhone />
@@ -91,20 +92,19 @@ const SignupForm = () => {
           </div>
           <div className="flex gap-4 items-center py-2 px-4 border-b border-b-gray-300 ">
             <label>
-              <HiMail />
+              <FaUser />
             </label>
             <input
-              className="outline-none flex-grow"
-              value={details?.email}
+              className="outline-none flex-grow capitalize"
+              value={details?.last_name}
               onChange={(e) =>
-                setDetails((prev) => ({ ...prev, email: e.target.value }))
+                setDetails((prev) => ({ ...prev, last_name: e.target.value }))
               }
-              type="email"
-              placeholder="Email"
-              required
+              type="text"
+              placeholder="Last Name"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className={`${styles.form_row}`}>
           <div className="flex gap-4 items-center py-2 px-4 border-b border-b-gray-300 ">
@@ -158,7 +158,7 @@ const SignupForm = () => {
           }}
           className="text-green-600 px-2"
         >
-          Sign in
+          Login
         </button>
       </div>
     </form>
