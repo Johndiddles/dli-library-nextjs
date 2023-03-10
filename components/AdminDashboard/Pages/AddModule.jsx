@@ -1,11 +1,17 @@
 import axios from "axios";
 import Head from "next/head";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import DashboardHeader from "../Components/DashboardHeader";
 import Banner from "../../Banner/Banner";
 import { BASE_URL } from "../../../constants/variables";
 import { useAdminContext } from "../../../pages/context/adminAuth";
+import { BiError } from "react-icons/bi";
+import { BsCheck2All, BsCheckAll, BsCheckLg } from "react-icons/bs";
+import ButtonSpinner from "../../Loader/ButtonSpinner";
+import { toast } from "react-toastify";
+import { IoCheckmarkDoneSharp } from "react-icons/io5";
+import { FaCheckDouble } from "react-icons/fa";
 // import "./dashboard.styles.scss";
 
 const AddModule = ({ page }) => {
@@ -24,9 +30,25 @@ const AddModule = ({ page }) => {
 
   const [imageUrl, setImageUrl] = useState("");
 
+  const [thumbnailStatus, setThumbnailStatus] = useState("idle");
+  const [addStatus, setAddStatus] = useState("idle");
+
+  const resetForm = () => {
+    setCourseCode("");
+    setCourseTitle("");
+    setDepartment("");
+    setLevel("");
+    setImageUrl("");
+    setRawFile({});
+  };
+
   const addModule = async (e) => {
     e.preventDefault();
+
     const token = localStorage.token;
+
+    setAddStatus("idle");
+    setThumbnailStatus(() => "pending");
     try {
       const formData = new FormData();
 
@@ -41,9 +63,9 @@ const AddModule = ({ page }) => {
         }
       );
 
-      // console.log({ response });
-
       if (response?.status === 201) {
+        setThumbnailStatus("success");
+        setAddStatus("pending");
         const base64Image = new Buffer.from(
           response?.data?.data?.data
         ).toString("base64");
@@ -71,40 +93,106 @@ const AddModule = ({ page }) => {
             }
           );
 
-          // console.log({ response });
-
           if (response?.status === 201) {
-            alert(`successfully uploaded ${courseTitle}`);
+            setAddStatus("success");
+            toast.success(`successfully uploaded ${courseTitle}`);
+            resetForm();
           }
         } catch (error) {
           // console.log({ error });
           alert("failed to upload book ");
+          setAddStatus("failed");
         }
       }
     } catch (error) {
       // console.log({ error });
+      setThumbnailStatus("failed");
+      setAddStatus("failed");
     }
   };
+
+  const thumbnailStatusMessage = useMemo(() => {
+    if (thumbnailStatus === "idle") {
+      return "";
+    }
+    if (thumbnailStatus === "pending") {
+      return (
+        <span className="flex items-center gap-2 whitespace-nowrap text-gray-500">
+          {" "}
+          <ButtonSpinner /> Generating Thumbnail
+        </span>
+      );
+    }
+    if (thumbnailStatus === "success") {
+      return (
+        <span className="flex items-center gap-2 whitespace-nowrap text-green-700">
+          <BsCheckLg /> Generated Thumbnail
+        </span>
+      );
+    }
+    if (thumbnailStatus === "failed") {
+      return (
+        <span className="flex items-center gap-2 whitespace-nowrap text-red-500">
+          <BiError /> Failed to generate thumbail
+        </span>
+      );
+    }
+  }, [thumbnailStatus]);
+
+  const addModuleStatusMessage = useMemo(() => {
+    if (addStatus === "idle") {
+      return "";
+    }
+    if (addStatus === "pending") {
+      return (
+        <span className="flex items-center whitespace-nowrap gap-2 text-gray-500">
+          {" "}
+          <ButtonSpinner /> Saving Module
+        </span>
+      );
+    }
+    if (addStatus === "success") {
+      return (
+        <span className="flex items-center whitespace-nowrap gap-2 text-green-700">
+          <FaCheckDouble /> Saved Module Successfully
+        </span>
+      );
+    }
+    if (addStatus === "failed") {
+      return (
+        <span className="flex items-center gap-2 text-red-500">
+          <BiError /> Failed to save Module
+        </span>
+      );
+    }
+  }, [addStatus]);
 
   return (
     <div className="h-fit flex flex-col">
       <Head>
-        <title>Download Modules</title>
+        <title>Add Modules</title>
       </Head>
 
-      <div className="dashboard py-10 flex flex-col items-center justify-center gap-8">
-        <div className="flex items-center justify-center gap-8">
-          <div className="dashboard-form flex flex-col gap-4">
-            <p className="dashboard-form__header text-center font-semibold text-2xl">
+      <div className="dashboard py-2 flex flex-col items-center justify-center gap-8 w-full text-slate-800">
+        <div
+          className="flex items-center justify-center gap-8 bg-white px-6 py-4 rounded-lg w-full"
+          style={{
+            boxShadow: "0px 0px 50px rgba(125,125,125, 0.125)",
+          }}
+        >
+          <div className="dashboard-form flex flex-col gap-4 w-full">
+            <p className="dashboard-form__header font-montserrat font-semibold text-lg text-slate-800  pb-4 border-b border-b-slate-900 border-opacity-5">
               Add Modules
             </p>
-            <form className="p-8 min-w-[320px] rounded-2xl flex flex-col gap-4 bg-green-900 bg-opacity-10 backdrop-blur-sm">
-              <div className="form-group flex flex-col text-sm font-semibold">
-                <label className="label" htmlFor="courseCode">
-                  Course Code
-                </label>
+            <form className="w-full rounded-2xl flex flex-col gap-4 backdrop-blur-sm">
+              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+                <label className="label font-semibold">Course Code</label>
                 <input
-                  className="rounded px-2 py-1 outline-none"
+                  className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
+                  style={{
+                    border: "1px solid rgba(125, 125, 125, 0.125)",
+                    boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
+                  }}
                   name="courseCode"
                   type="text"
                   id="courseCode"
@@ -113,12 +201,14 @@ const AddModule = ({ page }) => {
                   onChange={(e) => setCourseCode(e.target.value)}
                 />
               </div>
-              <div className="form-group flex flex-col text-sm font-semibold">
-                <label className="label" htmlFor="courseTitle">
-                  Course Title
-                </label>
+              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+                <label className="label font-semibold">Course Title</label>
                 <input
-                  className="rounded px-2 py-1 outline-none"
+                  className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
+                  style={{
+                    border: "1px solid rgba(125, 125, 125, 0.125)",
+                    boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
+                  }}
                   name="courseTitle"
                   type="text"
                   id="courseTitle"
@@ -128,10 +218,8 @@ const AddModule = ({ page }) => {
                 />
               </div>
 
-              <div className="form-group flex flex-col text-sm font-semibold">
-                <label className="label" htmlFor="department">
-                  Department
-                </label>
+              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+                <label className="label">Department</label>
                 <select
                   name="department"
                   type="text"
@@ -139,6 +227,7 @@ const AddModule = ({ page }) => {
                   placeholder="Department"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
+                  className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
                 >
                   <option value="">Select Department</option>
                   <option value="accounting">Accounting</option>
@@ -151,10 +240,8 @@ const AddModule = ({ page }) => {
                 </select>
               </div>
 
-              <div className="form-group flex flex-col text-sm font-semibold">
-                <label className="label" htmlFor="level">
-                  Level
-                </label>
+              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+                <label className="label">Level</label>
                 <select
                   name="level"
                   type="text"
@@ -162,6 +249,7 @@ const AddModule = ({ page }) => {
                   placeholder="Level"
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
+                  className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
                 >
                   <option value="">Select Level</option>
                   <option value="100">100</option>
@@ -174,49 +262,64 @@ const AddModule = ({ page }) => {
                 </select>
               </div>
 
-              <div className="form-group flex flex-col text-sm font-semibold">
-                <label className="label" htmlFor="url">
-                  File Url
-                </label>
-                <input
-                  className="rounded px-2 py-1 outline-none"
-                  name="url"
-                  type="file"
-                  id="url"
-                  placeholder="File Url"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setRawFile(e.target.files[0]);
-                    function getBase64(file) {
-                      return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = (error) => reject(error);
-                      });
-                    }
+              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+                <div className="label font-semibold">File Url</div>
+                <label htmlFor="url">
+                  <div className="w-full font-normal cursor-pointer border border-gray-200 rounded-lg overflow-hidden flex gap-8 items-center ">
+                    <span className="flex w-fit text-white py-3 px-4 cursor-pointer font-semibold bg-gray-600 hover:bg-gray-800 duration-300">
+                      Select a Document
+                    </span>
+                    <span>{rawFile?.name ?? ""}</span>
+                    <input
+                      className="hidden"
+                      style={{
+                        border: "1px solid rgba(125, 125, 125, 0.125)",
+                        boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
+                      }}
+                      name="url"
+                      type="file"
+                      id="url"
+                      placeholder="File Url"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setRawFile(e.target.files[0]);
+                        function getBase64(file) {
+                          return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () => resolve(reader.result);
+                            reader.onerror = (error) => reject(error);
+                          });
+                        }
 
-                    getBase64(file).then((data) => {
-                      urlRef.current = data;
-                    });
-                  }}
-                />
+                        getBase64(file).then((data) => {
+                          urlRef.current = data;
+                        });
+                      }}
+                    />
+                  </div>
+                </label>
               </div>
-              <div className="form-group flex flex-col text-sm font-semibold">
+              <div className="form-group w-full mt-8 flex gap-2 text-sm font-semibold justify-between ">
+                <div className="flex items-center gap-4">
+                  <div>{thumbnailStatusMessage}</div>
+                  <div>{addModuleStatusMessage}</div>
+                </div>
                 <button
-                  className="bg-green-600 text-white rounded-lg px-4 py-2 font-semibold hover:bg-green-800 duration-300"
+                  className={`${
+                    thumbnailStatus === "pending" || addStatus === "pending"
+                      ? "bg-opacity-50"
+                      : "bg-opacity-100"
+                  } bg-green-600 w-fit text-white rounded-lg px-6 py-3 font-normal text-sm hover:bg-green-800 duration-300`}
                   onClick={addModule}
+                  disabled={
+                    thumbnailStatus === "pending" || addStatus === "pending"
+                  }
                 >
                   Add Module
                 </button>
               </div>
             </form>
-          </div>
-
-          <div className="min-w-[360px] min-h-[360px] border">
-            {imageUrl && (
-              <Image height={360} width={360} src={imageUrl} alt="" />
-            )}
           </div>
         </div>
       </div>

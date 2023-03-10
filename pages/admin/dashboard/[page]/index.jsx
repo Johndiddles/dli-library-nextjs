@@ -36,7 +36,7 @@ const DashboardPages = (props) => {
         router.push("/admin/login");
       }
       setIsReady(true);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(authTimeout);
   }, [isAuth, router]);
