@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import {
   createContext,
   useCallback,
@@ -12,6 +13,7 @@ import { BASE_URL } from "../../constants/variables";
 const AuthContext = createContext();
 
 const AuthContextProvider = ({ children }) => {
+  const router = useRouter();
   const [user, setUser] = useState({});
   const [token, setToken] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
@@ -50,21 +52,26 @@ const AuthContextProvider = ({ children }) => {
       const response = await axios.post(`${BASE_URL}/user/login`, data);
 
       if (response?.status === 201 || response?.status === 200) {
-        localStorage.setItem("token", response?.data?.data?.token);
+        const { data } = response?.data;
+        localStorage.setItem("token", data?.token);
 
-        setToken(() => response?.data?.data?.token);
-        setUser(() => response?.data?.data?.user);
+        setToken(() => data?.token);
+        setUser(() => data?.user);
         setIsAuth(() => true);
 
-        setTimeout(() => next(response?.data?.data?.token), 100);
+        if (data?.user?.role === "admin") {
+          router.push("/admin/dashboard/index");
+        } else if (next) {
+          setTimeout(() => next(data?.token), 100);
+        }
+
         toast.success("Welcome Back!");
         setLoginStatus("success");
       }
     } catch (error) {
       setLoginStatus("failed");
       toast.error(
-        error?.response?.data?.data?.message ??
-          "Unable to complete your request at the moment."
+        error?.data?.message ?? "Unable to complete your request at the moment."
       );
     }
   };

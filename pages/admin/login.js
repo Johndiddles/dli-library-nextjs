@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Banner from "../../components/Banner/Banner";
 import { useAuthContext } from "../context/authContext";
+import LoginForm from "../../components/Login/LoginForm";
 
 const AdminLogin = () => {
   const { login } = useAuthContext();
@@ -27,7 +28,7 @@ const AdminLogin = () => {
 
     const next = async () => {
       clearInputs();
-      await router.push("/admin/dashboard");
+      await router.push("/admin/dashboard/index");
     };
 
     login(data, next);
@@ -45,7 +46,7 @@ const AdminLogin = () => {
       <div className="adminLoginPage py-10 flex items-center justify-center gap-8">
         <div className="adminLoginPage__left"></div>
         <div className="adminLoginPage__right">
-          <form className="p-8 min-w-[320px] rounded-2xl flex flex-col gap-4 bg-slate-900 bg-opacity-10 backdrop-blur-sm">
+          {/* <form className="p-8 min-w-[320px] rounded-2xl flex flex-col gap-4 bg-slate-900 bg-opacity-10 backdrop-blur-sm">
             <div className="formGroup flex flex-col text-sm font-semibold">
               <label htmlFor="username">Username</label>
               <input
@@ -72,7 +73,10 @@ const AdminLogin = () => {
             >
               {submitButtonContent}
             </button>
-          </form>
+          </form> */}
+          <div className="max-w-[360px]">
+            <LoginForm />
+          </div>
         </div>
       </div>
     </div>

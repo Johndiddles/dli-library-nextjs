@@ -1,12 +1,20 @@
 import axios from "axios";
 import Head from "next/head";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
-import Banner from "../../../components/Banner/Banner";
+import React, { useEffect, useRef, useState } from "react";
+import DashboardHeader from "../Components/DashboardHeader";
+import Banner from "../../Banner/Banner";
 import { BASE_URL } from "../../../constants/variables";
+import { useAdminContext } from "../../../pages/context/adminAuth";
 // import "./dashboard.styles.scss";
 
-const Dashboard = () => {
+const AddModule = ({ page }) => {
+  const { setActivePage } = useAdminContext();
+
+  useEffect(() => {
+    setActivePage(() => page);
+  }, [page, setActivePage]);
+
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
   const [department, setDepartment] = useState("");
@@ -83,13 +91,8 @@ const Dashboard = () => {
       <Head>
         <title>Download Modules</title>
       </Head>
-      <Banner
-        title="Admin Dashboard"
-        imgUrl="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1673&q=80"
-      />
-      <div className="dashboard py-10 flex flex-col items-center justify-center gap-8">
-        <h1>Dashboard</h1>
 
+      <div className="dashboard py-10 flex flex-col items-center justify-center gap-8">
         <div className="flex items-center justify-center gap-8">
           <div className="dashboard-form flex flex-col gap-4">
             <p className="dashboard-form__header text-center font-semibold text-2xl">
@@ -221,4 +224,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AddModule;
