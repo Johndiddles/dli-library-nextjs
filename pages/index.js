@@ -35,7 +35,7 @@ const Home = ({ modules }) => {
 
 export default Home;
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const response = await axios.get(`${BASE_URL}/get-recent-modules`);
 
   const modules = JSON.stringify(response?.data);

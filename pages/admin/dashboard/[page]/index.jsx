@@ -33,7 +33,7 @@ const DashboardPages = (props) => {
   useEffect(() => {
     const authTimeout = setTimeout(() => {
       if (!isAuth) {
-        router.push("/admin/login");
+        router.push("/login");
       }
       setIsReady(true);
     }, 2000);

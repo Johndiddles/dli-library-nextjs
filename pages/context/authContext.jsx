@@ -22,6 +22,7 @@ const AuthContextProvider = ({ children }) => {
   const [signupStatus, setSignupStatus] = useState("idle");
 
   const signup = async (data, next) => {
+    console.log(next);
     try {
       setSignupStatus("pending");
       const response = await axios.post(`${BASE_URL}/user/create`, data);

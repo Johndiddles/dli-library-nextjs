@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useReducer, useState } from "react";
+import React, { useCallback, useReducer, useState } from "react";
 import { FaLock, FaUser } from "react-icons/fa";
 import { HiMail, HiPhone } from "react-icons/hi";
 import { useAuthContext } from "../../pages/context/authContext";
@@ -13,26 +13,30 @@ const SignupForm = () => {
   const { signup } = useAuthContext();
   const [details, setDetails] = useState({
     first_name: "",
-    // last_name: "",
     password: "",
     email: "",
-    // phone: "",
     confirm_password: "",
   });
 
-  const submitSignup = (e) => {
+  const clearInputs = () => {
+    setDetails({
+      first_name: "",
+      email: "",
+      password: "",
+      confirm_password: "",
+    });
+  };
+
+  const submitSignup = async (e) => {
     e.preventDefault();
     const data = details;
 
-    const next = async () => {
-      if (nextAction) {
-        await nextAction.action();
-      } else {
-        await router.push("/modules");
-      }
-    };
+    const next = nextAction
+      ? () => nextAction.action()
+      : () => router.push("/modules");
 
     signup(data, next);
+    clearInputs();
   };
 
   return (
