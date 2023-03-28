@@ -15,7 +15,7 @@ const LoginForm = () => {
     password: "",
   });
 
-  const submitLogin = (e) => {
+  const submitLogin = async (e) => {
     e.preventDefault();
     const data = details;
 
@@ -24,7 +24,8 @@ const LoginForm = () => {
       await setIsModalOpen(false);
     };
 
-    login(data, next);
+    await login(data, next);
+    setIsModalOpen(false);
   };
 
   return (

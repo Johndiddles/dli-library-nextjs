@@ -4,9 +4,6 @@ import Head from "next/head";
 import Hero from "../components/HomePage/Hero";
 import CommonBooks from "../components/HomePage/CommonBooks";
 import HowItWorks from "../components/HomePage/HowItWorks";
-
-import moduleTemplateCopy, { update } from "../models/createModule";
-import storeModuleTemplateCopy from "../models/storeModule";
 import axios from "axios";
 import { BASE_URL } from "../constants/variables";
 
@@ -27,7 +24,7 @@ const Home = ({ modules }) => {
       <main className="flex flex-col min-h-screen w-screen">
         <Hero />
         <HowItWorks />
-        <CommonBooks books={JSON.parse(modules)} />
+        <CommonBooks books={modules} />
       </main>
     </>
   );
@@ -36,9 +33,9 @@ const Home = ({ modules }) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const response = await axios.get(`${BASE_URL}/get-recent-modules`);
+  const response = await fetch(`${BASE_URL}/get-recent-modules`);
 
-  const modules = JSON.stringify(response?.data);
+  const modules = await response?.json();
 
   return {
     props: {
