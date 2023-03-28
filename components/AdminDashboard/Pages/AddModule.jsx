@@ -12,9 +12,11 @@ import ButtonSpinner from "../../Loader/ButtonSpinner";
 import { toast } from "react-toastify";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { FaCheckDouble } from "react-icons/fa";
+import useImageUpload from "../../../hooks/useImageUpload";
 // import "./dashboard.styles.scss";
 
 const AddModule = ({ page }) => {
+  const { uploadImage } = useImageUpload();
   const { setActivePage } = useAdminContext();
 
   useEffect(() => {
@@ -66,9 +68,15 @@ const AddModule = ({ page }) => {
       if (response?.status === 201) {
         setThumbnailStatus("success");
         setAddStatus("pending");
+
         const base64Image = new Buffer.from(
           response?.data?.data?.data
         ).toString("base64");
+
+        const imageUrl = await uploadImage(
+          `data:image/png;base64,${base64Image}`
+        );
+        console.log({ imageUrl });
 
         setImageUrl(`data:image/png;base64,${base64Image}`);
 
@@ -78,7 +86,7 @@ const AddModule = ({ page }) => {
         formData.set("courseTitle", courseTitle);
         formData.set("level", level);
         formData.set("department", department);
-        formData.set("thumbnail", `data:image/png;base64,${base64Image}`);
+        formData.set("thumbnail", imageUrl);
         formData.set("url", rawFile);
 
         try {

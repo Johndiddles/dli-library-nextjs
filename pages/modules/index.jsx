@@ -13,9 +13,21 @@ import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 import FullScreenLoader from "../../components/Loader/FullLoader";
 
+export async function getServerSideProps() {
+  const response = await axios.get(`${BASE_URL}/modules`);
+
+  const modules = JSON.stringify(response?.data);
+
+  return {
+    props: {
+      modules,
+    },
+  };
+}
+
 const Modules = (props) => {
   const [fetchModulesStatus, setFetchModuleStatus] = useState("idle");
-  const [allModules, setAllModules] = useState([]);
+  const [allModules, setAllModules] = useState(JSON.parse(props.modules));
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useReducer(
@@ -99,27 +111,27 @@ const Modules = (props) => {
   //** END PAGINATION AND LIST FILTER */
 
   //** FETCH BOOKS  */
-  useEffect(() => {
-    const fetchModules = async () => {
-      setFetchModuleStatus("pending");
-      try {
-        const { status, data } = await axios.get(`${BASE_URL}/modules`);
-        // console.log({ status, data });
+  // useEffect(() => {
+  //   const fetchModules = async () => {
+  //     setFetchModuleStatus("pending");
+  //     try {
+  //       const { status, data } = await axios.get(`${BASE_URL}/modules`);
+  //       // console.log({ status, data });
 
-        if (status === 200) {
-          setAllModules(data);
-          setFetchModuleStatus("success");
-        } else {
-          setFetchModuleStatus("failed");
-        }
-      } catch (error) {
-        // console.log({ error });
-        setFetchModuleStatus("failed");
-      }
-    };
+  //       if (status === 200) {
+  //         setAllModules(data);
+  //         setFetchModuleStatus("success");
+  //       } else {
+  //         setFetchModuleStatus("failed");
+  //       }
+  //     } catch (error) {
+  //       // console.log({ error });
+  //       setFetchModuleStatus("failed");
+  //     }
+  //   };
 
-    if (fetchModulesStatus === "idle") fetchModules();
-  }, [fetchModulesStatus]);
+  //   if (fetchModulesStatus === "idle") fetchModules();
+  // }, [fetchModulesStatus]);
   //** END BOOK FETCHING */
 
   return (
