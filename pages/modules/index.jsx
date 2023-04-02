@@ -17,8 +17,6 @@ export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/modules`);
 
   const allModules = await response?.json();
-  console.log({ allModules });
-  // const allModules = JSON.stringify(response?.data);
 
   return {
     props: {

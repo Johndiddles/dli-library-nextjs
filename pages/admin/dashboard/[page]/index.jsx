@@ -10,6 +10,7 @@ import FullScreenLoader from "../../../../components/Loader/FullLoader";
 import AdminContextProvider from "../../../context/adminAuth";
 import { useAuthContext } from "../../../context/authContext";
 import UsersPanel from "../../../../components/AdminDashboard/Pages/Users";
+import SupportPanel from "../../../../components/AdminDashboard/Pages/Support";
 
 const DashboardPages = (props) => {
   const router = useRouter();
@@ -24,6 +25,7 @@ const DashboardPages = (props) => {
     "add-module": <AddModule page={page} />,
     index: <Dashboard page={page} />,
     users: <UsersPanel />,
+    support: <SupportPanel />,
   });
 
   const Page = useMemo(() => {

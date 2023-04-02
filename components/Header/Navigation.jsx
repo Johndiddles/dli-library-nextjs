@@ -28,6 +28,12 @@ const Navigation = ({ mobile, toggleNavbar }) => {
         name="Modules"
         href="/modules"
       />
+      <NavbarLink
+        toggleNavbar={toggleNavbar}
+        mobile={mobile}
+        name="Contact Us"
+        href="/contact"
+      />
     </div>
   );
 };
