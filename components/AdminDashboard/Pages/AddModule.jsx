@@ -8,11 +8,13 @@ import { BASE_URL } from "../../../constants/variables";
 import { useAdminContext } from "../../../pages/context/adminAuth";
 import { BiError } from "react-icons/bi";
 import { BsCheck2All, BsCheckAll, BsCheckLg } from "react-icons/bs";
+import { GoDotFill } from "react-icons/go";
 import ButtonSpinner from "../../Loader/ButtonSpinner";
 import { toast } from "react-toastify";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { FaCheckDouble } from "react-icons/fa";
 import useImageUpload from "../../../hooks/useImageUpload";
+import { MdCancel } from "react-icons/md";
 // import "./dashboard.styles.scss";
 
 const AddModule = ({ page }) => {
@@ -23,9 +25,32 @@ const AddModule = ({ page }) => {
     setActivePage(() => page);
   }, [page, setActivePage]);
 
+  const allDepartments = useRef([
+    {
+      title: "Accounting",
+      value: "accounting",
+    },
+    {
+      title: "Business Admin",
+      value: "business administration",
+    },
+    {
+      title: "Public Admin",
+      value: "public administration",
+    },
+    {
+      title: "Economics",
+      value: "economics",
+    },
+    {
+      title: "General",
+      value: "general",
+    },
+  ]);
+
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState([]);
   const [level, setLevel] = useState("");
   const urlRef = useRef(null);
   const [rawFile, setRawFile] = useState({});
@@ -38,7 +63,7 @@ const AddModule = ({ page }) => {
   const resetForm = () => {
     setCourseCode("");
     setCourseTitle("");
-    setDepartment("");
+    setDepartment([]);
     setLevel("");
     setImageUrl("");
     setRawFile({});
@@ -228,7 +253,43 @@ const AddModule = ({ page }) => {
 
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
                 <label className="label">Department</label>
-                <select
+                <div className="border border-gray-200 rounded-lg px-3 py-[10px] font-normal flex gap-4">
+                  {allDepartments?.current?.map((dept) => (
+                    <div
+                      key={dept.value}
+                      className={`flex gap-2 items-center w-fit py-2 px-4 ${
+                        department?.includes(dept.value)
+                          ? "bg-gray-700 text-gray-100"
+                          : "bg-gray-100"
+                      } hover:bg-gray-700 hover:text-gray-100 duration-300 cursor-pointer rounded`}
+                      onClick={() => {
+                        if (department?.includes(dept.value)) {
+                          setDepartment((prev) =>
+                            prev.filter((prevData) => prevData !== dept.value)
+                          );
+                        } else {
+                          setDepartment((prev) => [...prev, dept.value]);
+                        }
+                      }}
+                    >
+                      {department?.includes(dept?.value) ? (
+                        <span>
+                          <MdCancel className="" />
+                        </span>
+                      ) : (
+                        <div
+                          className={`w-3 h-3 rounded-full border border-gray-300 ${
+                            department?.includes(dept?.value)
+                              ? "bg-gray-100"
+                              : "bg-transparent"
+                          }`}
+                        ></div>
+                      )}
+                      {dept.title}
+                    </div>
+                  ))}
+                </div>
+                {/* <select
                   name="department"
                   type="text"
                   id="department"
@@ -245,7 +306,7 @@ const AddModule = ({ page }) => {
                   <option value="public administration">Public Admin</option>
                   <option value="economics">Economics</option>
                   <option value="general">General</option>
-                </select>
+                </select> */}
               </div>
 
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">

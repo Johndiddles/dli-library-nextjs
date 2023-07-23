@@ -99,7 +99,8 @@ const SingleModule = ({ module }) => {
               <div>{module?.courseCode}</div> <div>{module?.courseTitle}</div>
             </div>
             <div className="text-xs font-semibold font-montserrat text-gray-400">
-              {module?.department}, {`${module?.level} level`}
+              {module?.department?.split(",")?.join(", ")},{" "}
+              {`${module?.level} level`}
             </div>
           </div>
 

@@ -84,7 +84,10 @@ const Modules = ({ allModules }) => {
       (module) =>
         (filters?.department === ""
           ? module?.department?.includes("")
-          : module?.department?.toLowerCase() === filters?.department) &&
+          : module?.department
+              ?.toLowerCase()
+              ?.split(",")
+              ?.includes(filters?.department)) &&
         (filters?.level === ""
           ? module?.level?.includes("")
           : module?.level?.toLowerCase() === filters?.level?.toLowerCase()) &&

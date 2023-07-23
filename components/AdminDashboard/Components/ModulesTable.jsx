@@ -51,7 +51,7 @@ const ModulesTable = () => {
           <td>{index + 1}</td>
           <td>{module?.courseCode}</td>
           <td>{module?.courseTitle}</td>
-          <td>{module?.department}</td>
+          <td>{module?.department?.split(",")?.join(", ")}</td>
           <td>{module?.level}</td>
           <td>
             <button className="py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold">
