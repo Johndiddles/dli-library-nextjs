@@ -1,52 +1,44 @@
 import axios from "axios";
 import Head from "next/head";
-import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import DashboardHeader from "../Components/DashboardHeader";
-import Banner from "../../Banner/Banner";
 import { BASE_URL } from "../../../constants/variables";
 import { useAdminContext } from "../../../pages/context/adminAuth";
 import { BiError } from "react-icons/bi";
-import { BsCheck2All, BsCheckAll, BsCheckLg } from "react-icons/bs";
-import { GoDotFill } from "react-icons/go";
+import { BsCheckLg } from "react-icons/bs";
 import ButtonSpinner from "../../Loader/ButtonSpinner";
 import { toast } from "react-toastify";
-import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { FaCheckDouble } from "react-icons/fa";
 import useImageUpload from "../../../hooks/useImageUpload";
 import { MdCancel } from "react-icons/md";
-// import "./dashboard.styles.scss";
+import { axiosInstance } from "../../../globalFunctions/axiosInstance";
+import Spinner from "../../Loader/Spinner";
 
 const AddModule = ({ page }) => {
   const { uploadImage } = useImageUpload();
   const { setActivePage } = useAdminContext();
+  const [fetchStatus, setFetchStatus] = useState("idle");
+  const [allDepartments, setAllDepartments] = useState([]);
 
   useEffect(() => {
     setActivePage(() => page);
   }, [page, setActivePage]);
 
-  const allDepartments = useRef([
-    {
-      title: "Accounting",
-      value: "accounting",
-    },
-    {
-      title: "Business Admin",
-      value: "business administration",
-    },
-    {
-      title: "Public Admin",
-      value: "public administration",
-    },
-    {
-      title: "Economics",
-      value: "economics",
-    },
-    {
-      title: "General",
-      value: "general",
-    },
-  ]);
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      setFetchStatus("pending");
+      const response = await axiosInstance("departments");
+      console.log({ response });
+
+      if (response?.status === 200) {
+        setAllDepartments(response?.data);
+        setFetchStatus("success");
+      } else {
+        setFetchStatus("failed");
+      }
+    };
+
+    if (fetchStatus === "idle") fetchDepartments();
+  }, [fetchStatus, setFetchStatus]);
 
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
@@ -254,40 +246,48 @@ const AddModule = ({ page }) => {
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
                 <label className="label">Department</label>
                 <div className="border border-gray-200 rounded-lg px-3 py-[10px] font-normal flex gap-4">
-                  {allDepartments?.current?.map((dept) => (
-                    <div
-                      key={dept.value}
-                      className={`flex gap-2 items-center w-fit py-2 px-4 ${
-                        department?.includes(dept.value)
-                          ? "bg-gray-700 text-gray-100"
-                          : "bg-gray-100"
-                      } hover:bg-gray-700 hover:text-gray-100 duration-300 cursor-pointer rounded`}
-                      onClick={() => {
-                        if (department?.includes(dept.value)) {
-                          setDepartment((prev) =>
-                            prev.filter((prevData) => prevData !== dept.value)
-                          );
-                        } else {
-                          setDepartment((prev) => [...prev, dept.value]);
-                        }
-                      }}
-                    >
-                      {department?.includes(dept?.value) ? (
-                        <span>
-                          <MdCancel className="" />
-                        </span>
-                      ) : (
-                        <div
-                          className={`w-3 h-3 rounded-full border border-gray-300 ${
-                            department?.includes(dept?.value)
-                              ? "bg-gray-100"
-                              : "bg-transparent"
-                          }`}
-                        ></div>
-                      )}
-                      {dept.title}
-                    </div>
-                  ))}
+                  {fetchStatus === "pending" ? (
+                    <>
+                      <Spinner />
+                    </>
+                  ) : allDepartments?.length === 0 ? (
+                    <div className="text-sm">no department found</div>
+                  ) : (
+                    allDepartments?.map((dept) => (
+                      <div
+                        key={dept.value}
+                        className={`flex gap-2 items-center w-fit py-2 px-4 ${
+                          department?.includes(dept.value)
+                            ? "bg-gray-700 text-gray-100"
+                            : "bg-gray-100"
+                        } hover:bg-gray-700 hover:text-gray-100 duration-300 cursor-pointer rounded`}
+                        onClick={() => {
+                          if (department?.includes(dept.value)) {
+                            setDepartment((prev) =>
+                              prev.filter((prevData) => prevData !== dept.value)
+                            );
+                          } else {
+                            setDepartment((prev) => [...prev, dept.value]);
+                          }
+                        }}
+                      >
+                        {department?.includes(dept?.value) ? (
+                          <span>
+                            <MdCancel className="" />
+                          </span>
+                        ) : (
+                          <div
+                            className={`w-3 h-3 rounded-full border border-gray-300 ${
+                              department?.includes(dept?.value)
+                                ? "bg-gray-100"
+                                : "bg-transparent"
+                            }`}
+                          ></div>
+                        )}
+                        {dept.title}
+                      </div>
+                    ))
+                  )}
                 </div>
                 {/* <select
                   name="department"
