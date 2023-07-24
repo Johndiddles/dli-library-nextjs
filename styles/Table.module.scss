@@ -68,6 +68,19 @@
   }
 }
 
+.departments {
+  &__table {
+    &__row {
+      grid-template-columns: 50px 1fr 1fr;
+      text-transform: initial;
+
+      td {
+        text-transform: initial !important;
+      }
+    }
+  }
+}
+
 .support {
   &__table {
     &__row {

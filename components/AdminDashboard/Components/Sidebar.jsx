@@ -5,6 +5,7 @@ import { BiBookAdd, BiSupport } from "react-icons/bi";
 import { useAuthContext } from "../../../pages/context/authContext";
 import { IoLogOut } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
+import { HiBuildingOffice2 } from "react-icons/hi2";
 import { useRouter } from "next/router";
 
 const Sidebar = () => {
@@ -27,6 +28,12 @@ const Sidebar = () => {
             slug="add-module"
             name="Add Module"
             icon={<BiBookAdd />}
+          />
+          <SidebarLink
+            url="/admin/dashboard/departments"
+            slug="departments"
+            name="Departments"
+            icon={<HiBuildingOffice2 />}
           />
           <SidebarLink
             url="/admin/dashboard/support"

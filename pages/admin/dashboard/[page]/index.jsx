@@ -11,6 +11,7 @@ import AdminContextProvider from "../../../context/adminAuth";
 import { useAuthContext } from "../../../context/authContext";
 import UsersPanel from "../../../../components/AdminDashboard/Pages/Users";
 import SupportPanel from "../../../../components/AdminDashboard/Pages/Support";
+import Departments from "../../../../components/AdminDashboard/Pages/Departments";
 
 const DashboardPages = (props) => {
   const router = useRouter();
@@ -26,6 +27,7 @@ const DashboardPages = (props) => {
     index: <Dashboard page={page} />,
     users: <UsersPanel />,
     support: <SupportPanel />,
+    departments: <Departments />,
   });
 
   const Page = useMemo(() => {
