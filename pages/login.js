@@ -1,10 +1,20 @@
 import Head from "next/head";
-import React from "react";
+import React, { useEffect } from "react";
 import Banner from "../components/Banner/Banner";
 import LoginForm from "../components/Login/LoginForm";
-import SignupForm from "../components/SignUp/SignupForm";
+import { useAuthContext } from "./context/authContext";
+import { useRouter } from "next/router";
 
-const SignUp = () => {
+const Login = () => {
+  const router = useRouter();
+  const { isAuth } = useAuthContext();
+
+  useEffect(() => {
+    if (isAuth) {
+      router.push("/modules");
+    }
+  }, [isAuth, router]);
+
   return (
     <div>
       <Head>
@@ -35,4 +45,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;

@@ -17,9 +17,7 @@ import EditModule from "../../../../components/AdminDashboard/Pages/EditModule";
 const DashboardPages = (props) => {
   const router = useRouter();
   const { page } = props;
-  const { isAuth } = useAuthContext();
-
-  // console.log({ router });
+  const { isAuth, user } = useAuthContext();
 
   const [isReady, setIsReady] = useState(false);
 
@@ -41,11 +39,14 @@ const DashboardPages = (props) => {
       if (!isAuth) {
         router.push("/login");
       }
+      if (user.role !== "admin") {
+        router.push("/modules");
+      }
       setIsReady(true);
     }, 2000);
 
     return () => clearTimeout(authTimeout);
-  }, [isAuth, router]);
+  }, [isAuth, router, user.role]);
 
   return (
     <AdminContextProvider>
@@ -55,7 +56,7 @@ const DashboardPages = (props) => {
         </Head>
         {!isReady ? (
           <FullScreenLoader />
-        ) : (
+        ) : isReady && user.role === "admin" ? (
           <div className="flex flex-col w-full h-full">
             <DashboardHeader />
             <div className="flex-grow flex w-full overflow-hidden">
@@ -72,7 +73,7 @@ const DashboardPages = (props) => {
               </div>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </AdminContextProvider>
   );

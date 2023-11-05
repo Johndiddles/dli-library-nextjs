@@ -1,7 +1,9 @@
 import Link from "next/link";
 import React from "react";
+import { useAuthContext } from "../../pages/context/authContext";
 
 const Navigation = ({ mobile, toggleNavbar }) => {
+  const { isAuth } = useAuthContext();
   return (
     <div
       className={`bg-transparent  top-0 left-0 ${
@@ -28,6 +30,14 @@ const Navigation = ({ mobile, toggleNavbar }) => {
         name="Modules"
         href="/modules"
       />
+      {isAuth && (
+        <NavbarLink
+          toggleNavbar={toggleNavbar}
+          mobile={mobile}
+          name="Liked Modules"
+          href="/modules/favourite-modules"
+        />
+      )}
       <NavbarLink
         toggleNavbar={toggleNavbar}
         mobile={mobile}

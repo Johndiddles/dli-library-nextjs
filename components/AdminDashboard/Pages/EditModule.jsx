@@ -16,7 +16,6 @@ import { useRouter } from "next/router";
 
 const EditModule = ({ page }) => {
   const router = useRouter();
-  console.log({ router });
   const { moduleId } = router.query;
 
   //   const { uploadImage } = useImageUpload();
@@ -32,8 +31,6 @@ const EditModule = ({ page }) => {
     const fetchDepartments = async () => {
       setFetchStatus("pending");
       const response = await axiosInstance("departments");
-      console.log({ response });
-
       if (response?.status === 200) {
         setAllDepartments(response?.data);
         setFetchStatus("success");
@@ -169,7 +166,6 @@ const EditModule = ({ page }) => {
         const response = await axios.get(
           `${BASE_URL}/modules/get-single-module/${moduleId}`
         );
-        console.log({ response });
 
         const fetchedModule = response?.data;
         setCourseCode(fetchedModule.courseCode);
@@ -180,7 +176,6 @@ const EditModule = ({ page }) => {
 
         setFetchModuleStatus("success");
       } catch (error) {
-        console.log({ error });
         setFetchModuleStatus("failed");
       }
     };

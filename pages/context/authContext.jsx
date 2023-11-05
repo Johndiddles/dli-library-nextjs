@@ -56,6 +56,8 @@ const AuthContextProvider = ({ children }) => {
         const { data } = response?.data;
         localStorage.setItem("token", data?.token);
 
+        console.log({ data });
+
         setToken(() => data?.token);
         setUser(() => data?.user);
         setIsAuth(() => true);

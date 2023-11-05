@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import React, { useReducer, useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { HiMail } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
 import { useAuthContext } from "../../pages/context/authContext";
 import { useLoginModalContext } from "../../pages/context/loginModalContext";
 
@@ -22,6 +21,8 @@ const LoginForm = () => {
     const next = async () => {
       if (nextAction) await nextAction.action();
       await setIsModalOpen(false);
+
+      if (!nextAction) router.push("/modules");
     };
 
     await login(data, next);

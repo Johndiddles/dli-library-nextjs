@@ -68,7 +68,6 @@ const SingleModule = ({ module }) => {
 
   return (
     <div
-      //   href={`/modules/${module?.id}`}
       className={`w-full bg-white rounded-md duration-300 cursor-pointer hover:-translate-y-1 ${styles.singleModuleWrapper}`}
       style={{
         boxShadow: "0px 1px 6px rgba(0,0,0,0.05)",
@@ -119,17 +118,21 @@ const SingleModule = ({ module }) => {
                 >
                   <FaLink />
                 </button>
-                <span className="border-l border-l-gray-200"></span>
-                <button
-                  className={`outline-none cursor-pointer duration-300 ${
-                    isModuleFavorite
-                      ? "text-green-600 hover:text-red-700"
-                      : "text-gray-400 hover:text-green-600"
-                  } `}
-                  onClick={addToFavorites}
-                >
-                  <FaHeart />
-                </button>
+                {!router.pathname?.includes("favourite-modules") && (
+                  <>
+                    <span className="border-l border-l-gray-200"></span>
+                    <button
+                      className={`outline-none cursor-pointer duration-300 ${
+                        isModuleFavorite
+                          ? "text-green-600 hover:text-red-700"
+                          : "text-gray-400 hover:text-green-600"
+                      } `}
+                      onClick={addToFavorites}
+                    >
+                      <FaHeart />
+                    </button>
+                  </>
+                )}
               </div>
               <div className="text-xs text-gray-400 text-center mb-2">
                 Date Added: {moment(module?.date).format("DD MMM YYYY")}
