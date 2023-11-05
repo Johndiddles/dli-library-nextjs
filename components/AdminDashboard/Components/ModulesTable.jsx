@@ -7,6 +7,7 @@ import styles from "../../../styles/Table.module.scss";
 import spinner from "../../../assets/spinner.svg";
 import { BsSearch } from "react-icons/bs";
 import Spinner from "../../Loader/Spinner";
+import Link from "next/link";
 
 const ModulesTable = () => {
   const [fetchStatus, setFetchStatus] = useState("idle");
@@ -65,9 +66,12 @@ const ModulesTable = () => {
             <td>{module?.department?.split(",")?.join(", ")}</td>
             <td>{module?.level}</td>
             <td>
-              <button className="py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold">
+              <Link
+                href={`/admin/dashboard/edit-module?moduleId=${module.id}`}
+                className="my-2 py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold"
+              >
                 Edit
-              </button>
+              </Link>
             </td>
           </tr>
         ));

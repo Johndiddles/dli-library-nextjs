@@ -1,10 +1,11 @@
 import React from "react";
 import { BsSearch, BsCloudDownload } from "react-icons/bs";
 import { AiOutlineEye } from "react-icons/ai";
+import Container from "../Container/Container";
 
 const HowItWorks = () => {
   return (
-    <div className="w-screen">
+    <Container>
       <div className="w-full flex flex-col items-center pt-8 pb-16 px-8 lg:px-24 gap-16 shadow-sm">
         <h2 className="uppercase font-semibold text-lg text-center sm:text-xl py-2 px-2 border-b-4 border-b-green-600 rounded-2xl">
           How it Works
@@ -28,7 +29,7 @@ const HowItWorks = () => {
           />
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

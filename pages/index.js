@@ -33,8 +33,7 @@ const Home = ({ modules }) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const response = await fetch(`${BASE_URL}/get-recent-modules`);
-
+  const response = await fetch(`${BASE_URL}/modules/recent`);
   const modules = await response?.json();
 
   return {

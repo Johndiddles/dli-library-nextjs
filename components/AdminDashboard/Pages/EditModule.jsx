@@ -12,9 +12,14 @@ import useImageUpload from "../../../hooks/useImageUpload";
 import { MdCancel } from "react-icons/md";
 import { axiosInstance } from "../../../globalFunctions/axiosInstance";
 import Spinner from "../../Loader/Spinner";
+import { useRouter } from "next/router";
 
-const AddModule = ({ page }) => {
-  const { uploadImage } = useImageUpload();
+const EditModule = ({ page }) => {
+  const router = useRouter();
+  console.log({ router });
+  const { moduleId } = router.query;
+
+  //   const { uploadImage } = useImageUpload();
   const { setActivePage } = useAdminContext();
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [allDepartments, setAllDepartments] = useState([]);
@@ -40,6 +45,7 @@ const AddModule = ({ page }) => {
     if (fetchStatus === "idle") fetchDepartments();
   }, [fetchStatus, setFetchStatus]);
 
+  const [fetchModuleStatus, setFetchModuleStatus] = useState("idle");
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
   const [department, setDepartment] = useState([]);
@@ -49,8 +55,64 @@ const AddModule = ({ page }) => {
 
   const [imageUrl, setImageUrl] = useState("");
 
-  const [thumbnailStatus, setThumbnailStatus] = useState("idle");
-  const [addStatus, setAddStatus] = useState("idle");
+  //   const [thumbnailStatus, setThumbnailStatus] = useState("idle");
+  const [updateStatus, setUpdateStatus] = useState("idle");
+
+  //   const thumbnailStatusMessage = useMemo(() => {
+  //     if (thumbnailStatus === "idle") {
+  //       return "";
+  //     }
+  //     if (thumbnailStatus === "pending") {
+  //       return (
+  //         <span className="flex items-center gap-2 whitespace-nowrap text-gray-500">
+  //           {" "}
+  //           <ButtonSpinner /> Generating Thumbnail
+  //         </span>
+  //       );
+  //     }
+  //     if (thumbnailStatus === "success") {
+  //       return (
+  //         <span className="flex items-center gap-2 whitespace-nowrap text-green-700">
+  //           <BsCheckLg /> Generated Thumbnail
+  //         </span>
+  //       );
+  //     }
+  //     if (thumbnailStatus === "failed") {
+  //       return (
+  //         <span className="flex items-center gap-2 whitespace-nowrap text-red-500">
+  //           <BiError /> Failed to generate thumbail
+  //         </span>
+  //       );
+  //     }
+  //   }, [thumbnailStatus]);
+
+  const updateModuleStatusMessage = useMemo(() => {
+    if (updateStatus === "idle") {
+      return "";
+    }
+    if (updateStatus === "pending") {
+      return (
+        <span className="flex items-center whitespace-nowrap gap-2 text-gray-500">
+          {" "}
+          <ButtonSpinner /> Saving Module
+        </span>
+      );
+    }
+    if (updateStatus === "success") {
+      return (
+        <span className="flex items-center whitespace-nowrap gap-2 text-green-700">
+          <FaCheckDouble /> Saved Module Successfully
+        </span>
+      );
+    }
+    if (updateStatus === "failed") {
+      return (
+        <span className="flex items-center gap-2 text-red-500">
+          <BiError /> Failed to save Module
+        </span>
+      );
+    }
+  }, [updateStatus]);
 
   const resetForm = () => {
     setCourseCode("");
@@ -61,141 +123,81 @@ const AddModule = ({ page }) => {
     setRawFile({});
   };
 
-  const addModule = async (e) => {
+  const updateModule = async (e) => {
     e.preventDefault();
 
     const token = localStorage.token;
 
-    setAddStatus("idle");
-    setThumbnailStatus(() => "pending");
+    setUpdateStatus("pending");
     try {
-      const formData = new FormData();
+      const payload = {
+        courseCode,
+        courseTitle,
+        level,
+        department: department?.join(","),
+        thumbnail: imageUrl,
+      };
 
-      formData.set("module", rawFile);
-      const response = await axios.post(
-        `${BASE_URL}/modules/createThumbnail`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response?.status === 201) {
-        setThumbnailStatus("success");
-        setAddStatus("pending");
-
-        const base64Image = new Buffer.from(
-          response?.data?.data?.data
-        ).toString("base64");
-
-        const imageUrl = await uploadImage(
-          `data:image/png;base64,${base64Image}`
-        );
-        console.log({ imageUrl });
-
-        setImageUrl(`data:image/png;base64,${base64Image}`);
-
-        const formData = new FormData();
-
-        formData.set("courseCode", courseCode);
-        formData.set("courseTitle", courseTitle);
-        formData.set("level", level);
-        formData.set("department", department);
-        formData.set("thumbnail", imageUrl);
-        formData.set("url", rawFile);
-
-        try {
-          const response = await axios.post(
-            `${BASE_URL}/modules/add`,
-            formData,
-
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (response?.status === 201) {
-            setAddStatus("success");
-            toast.success(`successfully uploaded ${courseTitle}`);
-            resetForm();
+      try {
+        const response = await axios.patch(
+          `${BASE_URL}/modules/update/${moduleId}`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        } catch (error) {
-          // console.log({ error });
-          alert("failed to upload book ");
-          setAddStatus("failed");
-        }
+        );
+
+        setUpdateStatus("success");
+        toast.success(`successfully updated ${courseTitle}`);
+        resetForm();
+        router.push("/admin/dashboard/index");
+      } catch (error) {
+        alert("failed to upload book ");
+        setUpdateStatus("failed");
       }
     } catch (error) {
-      // console.log({ error });
-      setThumbnailStatus("failed");
-      setAddStatus("failed");
+      setUpdateStatus("failed");
     }
   };
 
-  const thumbnailStatusMessage = useMemo(() => {
-    if (thumbnailStatus === "idle") {
-      return "";
-    }
-    if (thumbnailStatus === "pending") {
-      return (
-        <span className="flex items-center gap-2 whitespace-nowrap text-gray-500">
-          {" "}
-          <ButtonSpinner /> Generating Thumbnail
-        </span>
-      );
-    }
-    if (thumbnailStatus === "success") {
-      return (
-        <span className="flex items-center gap-2 whitespace-nowrap text-green-700">
-          <BsCheckLg /> Generated Thumbnail
-        </span>
-      );
-    }
-    if (thumbnailStatus === "failed") {
-      return (
-        <span className="flex items-center gap-2 whitespace-nowrap text-red-500">
-          <BiError /> Failed to generate thumbail
-        </span>
-      );
-    }
-  }, [thumbnailStatus]);
+  useEffect(() => {
+    const getModule = async () => {
+      setFetchModuleStatus("pending");
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/modules/get-single-module/${moduleId}`
+        );
+        console.log({ response });
 
-  const addModuleStatusMessage = useMemo(() => {
-    if (addStatus === "idle") {
-      return "";
-    }
-    if (addStatus === "pending") {
-      return (
-        <span className="flex items-center whitespace-nowrap gap-2 text-gray-500">
-          {" "}
-          <ButtonSpinner /> Saving Module
-        </span>
-      );
-    }
-    if (addStatus === "success") {
-      return (
-        <span className="flex items-center whitespace-nowrap gap-2 text-green-700">
-          <FaCheckDouble /> Saved Module Successfully
-        </span>
-      );
-    }
-    if (addStatus === "failed") {
-      return (
-        <span className="flex items-center gap-2 text-red-500">
-          <BiError /> Failed to save Module
-        </span>
-      );
-    }
-  }, [addStatus]);
+        const fetchedModule = response?.data;
+        setCourseCode(fetchedModule.courseCode);
+        setCourseTitle(fetchedModule.courseTitle);
+        setDepartment(fetchedModule.department?.split(","));
+        setLevel(fetchedModule.level);
+        setImageUrl(fetchedModule.thumbnail);
+
+        setFetchModuleStatus("success");
+      } catch (error) {
+        console.log({ error });
+        setFetchModuleStatus("failed");
+      }
+    };
+
+    if (moduleId && fetchModuleStatus === "idle") getModule();
+  }, [moduleId, fetchModuleStatus]);
+
+  if (!moduleId) {
+    toast.error("no module selected");
+    router.push("/admin/dashboard/index");
+    return;
+  }
 
   return (
     <div className="h-fit flex flex-col">
       <Head>
-        <title>Add Modules</title>
+        <title>Edit Modules</title>
       </Head>
 
       <div className="dashboard py-2 flex flex-col items-center justify-center gap-8 w-full text-slate-800">
@@ -207,7 +209,7 @@ const AddModule = ({ page }) => {
         >
           <div className="dashboard-form flex flex-col gap-4 w-full">
             <p className="dashboard-form__header font-montserrat font-semibold text-lg text-slate-800  pb-4 border-b border-b-slate-900 border-opacity-5">
-              Add Modules
+              Edit Modules
             </p>
             <form className="w-full rounded-2xl flex flex-col gap-4 backdrop-blur-sm">
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
@@ -313,7 +315,7 @@ const AddModule = ({ page }) => {
                 </select>
               </div>
 
-              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
+              {/* <div className="form-group flex flex-col gap-2 text-sm font-semibold">
                 <div className="label font-semibold">File Url</div>
                 <label htmlFor="url">
                   <div className="w-full font-normal cursor-pointer border border-gray-200 rounded-lg overflow-hidden flex gap-8 items-center ">
@@ -350,24 +352,23 @@ const AddModule = ({ page }) => {
                     />
                   </div>
                 </label>
-              </div>
+              </div> */}
+
               <div className="form-group w-full mt-8 flex gap-2 text-sm font-semibold justify-between ">
                 <div className="flex items-center gap-4">
-                  <div>{thumbnailStatusMessage}</div>
-                  <div>{addModuleStatusMessage}</div>
+                  {/* <div>{thumbnailStatusMessage}</div> */}
+                  <div>{updateModuleStatusMessage}</div>
                 </div>
                 <button
                   className={`${
-                    thumbnailStatus === "pending" || addStatus === "pending"
+                    updateStatus === "pending"
                       ? "bg-opacity-50"
                       : "bg-opacity-100"
                   } bg-green-600 w-fit text-white rounded-lg px-6 py-3 font-normal text-sm hover:bg-green-800 duration-300`}
-                  onClick={addModule}
-                  disabled={
-                    thumbnailStatus === "pending" || addStatus === "pending"
-                  }
+                  onClick={updateModule}
+                  disabled={updateStatus === "pending"}
                 >
-                  Add Module
+                  Update Module
                 </button>
               </div>
             </form>
@@ -378,4 +379,4 @@ const AddModule = ({ page }) => {
   );
 };
 
-export default AddModule;
+export default EditModule;

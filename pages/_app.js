@@ -3,6 +3,7 @@
 import "../styles/globals.css";
 
 import "react-toastify/dist/ReactToastify.css";
+import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
 
 import { Montserrat, Raleway } from "@next/font/google";
@@ -26,6 +27,8 @@ export default function App({ Component, pageProps }) {
       >
         <Component {...pageProps} />
       </main>
+
+      <Analytics />
       <ToastContainer />
     </MainLayout>
   );

@@ -12,6 +12,7 @@ import { useAuthContext } from "../../../context/authContext";
 import UsersPanel from "../../../../components/AdminDashboard/Pages/Users";
 import SupportPanel from "../../../../components/AdminDashboard/Pages/Support";
 import Departments from "../../../../components/AdminDashboard/Pages/Departments";
+import EditModule from "../../../../components/AdminDashboard/Pages/EditModule";
 
 const DashboardPages = (props) => {
   const router = useRouter();
@@ -24,6 +25,7 @@ const DashboardPages = (props) => {
 
   const dashboardRoutes = useRef({
     "add-module": <AddModule page={page} />,
+    "edit-module": <EditModule page={page} />,
     index: <Dashboard page={page} />,
     users: <UsersPanel />,
     support: <SupportPanel />,

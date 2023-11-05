@@ -7,7 +7,7 @@ const addFavorites = async (id) => {
 
   try {
     const response = await axios.post(
-      `${BASE_URL}/add-to-favorites`,
+      `${BASE_URL}/user/add-to-favorites`,
       { id },
       {
         headers: {

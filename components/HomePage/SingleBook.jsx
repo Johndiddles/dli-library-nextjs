@@ -23,7 +23,9 @@ const SingleBook = ({ book }) => {
         }}
       >
         <span>{book?.courseCode}</span>
-        <div>{book?.courseTitle}</div>
+        <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+          {book?.courseTitle}
+        </div>
       </div>
     </Link>
   );

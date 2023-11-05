@@ -48,7 +48,7 @@ const SingleModulePage = () => {
 
       try {
         const moduleDetailsResponse = await axios.get(
-          `${BASE_URL}/get-single-module/${id}`
+          `${BASE_URL}/modules/get-single-module/${id}`
         );
         // const moduleResponse = await axios.get(`${BASE_URL}/modules/${id}`);
 
