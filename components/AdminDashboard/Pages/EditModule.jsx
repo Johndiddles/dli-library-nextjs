@@ -13,8 +13,10 @@ import { MdCancel } from "react-icons/md";
 import { axiosInstance } from "../../../globalFunctions/axiosInstance";
 import Spinner from "../../Loader/Spinner";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const EditModule = ({ page }) => {
+  const { data: session } = useSession();
   const router = useRouter();
   const { moduleId } = router.query;
 
@@ -123,7 +125,7 @@ const EditModule = ({ page }) => {
   const updateModule = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.token;
+    const token = session.user.token;
 
     setUpdateStatus("pending");
     try {

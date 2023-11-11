@@ -3,9 +3,12 @@ import { axiosInstance } from "../../../globalFunctions/axiosInstance";
 import { BASE_URL } from "../../../constants/variables";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 const AddDepartmentForm = ({ setFetchStatus }) => {
-  const token = localStorage.token;
+  const { data: session } = useSession();
+  const token = session.user.token;
+
   const [details, setDetails] = useState({
     title: "",
     value: "",

@@ -12,8 +12,10 @@ import useImageUpload from "../../../hooks/useImageUpload";
 import { MdCancel } from "react-icons/md";
 import { axiosInstance } from "../../../globalFunctions/axiosInstance";
 import Spinner from "../../Loader/Spinner";
+import { useSession } from "next-auth/react";
 
 const AddModule = ({ page }) => {
+  const { data: session } = useSession();
   const { uploadImage } = useImageUpload();
   const { setActivePage } = useAdminContext();
   const [fetchStatus, setFetchStatus] = useState("idle");
@@ -27,7 +29,7 @@ const AddModule = ({ page }) => {
     const fetchDepartments = async () => {
       setFetchStatus("pending");
       const response = await axiosInstance("departments");
-      console.log({ response });
+      // console.log({ response });
 
       if (response?.status === 200) {
         setAllDepartments(response?.data);
@@ -64,7 +66,7 @@ const AddModule = ({ page }) => {
   const addModule = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.token;
+    const token = session.user.token;
 
     setAddStatus("idle");
     setThumbnailStatus(() => "pending");

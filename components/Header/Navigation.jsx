@@ -1,9 +1,11 @@
 import Link from "next/link";
 import React from "react";
 import { useAuthContext } from "../../pages/context/authContext";
+import { useSession } from "next-auth/react";
+import { ADMIN_KEY } from "../../constants/variables";
 
 const Navigation = ({ mobile, toggleNavbar }) => {
-  const { isAuth } = useAuthContext();
+  const { data: session } = useSession();
   return (
     <div
       className={`bg-transparent  top-0 left-0 ${
@@ -18,6 +20,14 @@ const Navigation = ({ mobile, toggleNavbar }) => {
         name="Home"
         href="/"
       />
+      {session?.user?.role === ADMIN_KEY && (
+        <NavbarLink
+          toggleNavbar={toggleNavbar}
+          mobile={mobile}
+          name="Dashboard"
+          href="/admin/dashboard/index"
+        />
+      )}
       <NavbarLink
         toggleNavbar={toggleNavbar}
         mobile={mobile}
@@ -30,7 +40,7 @@ const Navigation = ({ mobile, toggleNavbar }) => {
         name="Modules"
         href="/modules"
       />
-      {isAuth && (
+      {session && (
         <NavbarLink
           toggleNavbar={toggleNavbar}
           mobile={mobile}

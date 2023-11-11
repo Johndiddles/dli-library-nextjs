@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { BiLogOutCircle } from "react-icons/bi";
-import { useAuthContext } from "../../pages/context/authContext";
-import { useLoginModalContext } from "../../pages/context/loginModalContext";
+// import { useAuthContext } from "../../pages/context/authContext";
+// import { useLoginModalContext } from "../../pages/context/loginModalContext";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const NavProfile = ({ mobile, toggleNavbar }) => {
-  const { isAuth, logout } = useAuthContext();
-  const { setIsModalOpen } = useLoginModalContext();
+  const router = useRouter();
+  const { data: session } = useSession();
+  // const { setIsModalOpen } = useLoginModalContext();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const logout = () => router.push("/api/auth/signout?callbackUrl=/");
   return (
     <div className="relative">
-      {isAuth ? (
+      {session ? (
         <>
           {mobile ? (
             <div className="w-full flex justify-between py-5">
@@ -63,8 +67,9 @@ const NavProfile = ({ mobile, toggleNavbar }) => {
       ) : (
         <button
           onClick={() => {
-            setIsModalOpen((prev) => !prev);
-            mobile && toggleNavbar();
+            router.push("/api/auth/signin?callbackUrl=/");
+            // setIsModalOpen((prev) => !prev);
+            // mobile && toggleNavbar();
           }}
           className={`flex items-center gap-1 duration-300 shadow-md ${
             mobile

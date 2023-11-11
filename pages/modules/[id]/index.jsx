@@ -16,11 +16,12 @@ import { FaHeart, FaLink } from "react-icons/fa";
 import Banner from "../../../components/Banner/Banner";
 import ButtonSpinner from "../../../components/Loader/ButtonSpinner";
 import FullScreenLoader from "../../../components/Loader/FullLoader";
-import { BASE_URL } from "../../../constants/variables";
+import { BASE_URL, CLIENT_ORIGIN } from "../../../constants/variables";
 import addFavorites from "../../../globalFunctions/addBookToFavorites";
 import copyLink from "../../../globalFunctions/copyModuleLink";
 import { useAuthContext } from "../../context/authContext";
-import { useLoginModalContext } from "../../context/loginModalContext";
+// import { useLoginModalContext } from "../../context/loginModalContext";
+import { useSession } from "next-auth/react";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -30,12 +31,13 @@ const DocumentViewer = dynamic(
 );
 
 const SingleModulePage = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const { id } = router?.query;
 
-  const { verifyUser, user, isAuth } = useAuthContext();
-  const { setIsModalOpen } = useLoginModalContext();
-  const { favorite_modules } = user;
+  const { verifyUser, favorite_modules } = useAuthContext();
+  // const { setIsModalOpen } = useLoginModalContext();
+
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [moduleDetails, setModuleDetails] = useState({});
   const [module, setModule] = useState(null);
@@ -100,18 +102,20 @@ const SingleModulePage = () => {
 
   const addBookToFavorites = useCallback(() => {
     const action = async () => {
-      const response = await addFavorites(id);
+      const response = await addFavorites(id, session.user.token);
 
       if (response?.message === "success") {
         verifyUser();
       } else if (response?.message === "unauthorized") {
-        setIsModalOpen((prev) => !prev);
+        router.push(
+          `${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules/${id}`
+        );
       } else {
       }
     };
 
     return action();
-  }, [verifyUser, id, setIsModalOpen]);
+  }, [verifyUser, id, router, session?.user?.token]);
 
   const isBookFavorites = useMemo(
     () => favorite_modules?.includes(id),
@@ -120,10 +124,12 @@ const SingleModulePage = () => {
 
   const addToFavorites = (e) => {
     e.preventDefault();
-    if (isAuth) {
+    if (session) {
       addBookToFavorites();
     } else {
-      setIsModalOpen(true);
+      router.push(
+        `${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules/${id}`
+      );
     }
   };
   return (

@@ -10,15 +10,18 @@ import moment from "moment";
 import ButtonSpinner from "../Loader/ButtonSpinner";
 import { useRouter } from "next/router";
 import copyLink from "../../globalFunctions/copyModuleLink";
-import { useLoginModalContext } from "../../pages/context/loginModalContext";
+// import { useLoginModalContext } from "../../pages/context/loginModalContext";
 import { useAuthContext } from "../../pages/context/authContext";
 import addFavorites from "../../globalFunctions/addBookToFavorites";
+import { useSession } from "next-auth/react";
+import { CLIENT_ORIGIN } from "../../constants/variables";
 
 const SingleModule = ({ module }) => {
+  const { data: session } = useSession();
   const router = useRouter();
-  const { isAuth, verifyUser, user } = useAuthContext();
-  const { favorite_modules } = user;
-  const { setIsModalOpen } = useLoginModalContext();
+  const { verifyUser, favorite_modules } = useAuthContext();
+  // const { favorite_modules } = user;
+  // const { setIsModalOpen } = useLoginModalContext();
   const [downloading, setDownloading] = useState(false);
   const downloadBook = async (id) => {
     setDownloading(true);
@@ -44,25 +47,25 @@ const SingleModule = ({ module }) => {
 
   const addBookToFavorites = useCallback(() => {
     const action = async () => {
-      const response = await addFavorites(module?.id);
+      const response = await addFavorites(module?.id, session.user.token);
 
       if (response?.message === "success") {
         verifyUser();
       } else if (response?.message === "unauthorized") {
-        setIsModalOpen((prev) => !prev);
+        router.push(`${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules`);
       } else {
       }
     };
 
     return action();
-  }, [verifyUser, module?.id, setIsModalOpen]);
+  }, [verifyUser, module?.id, router, session?.user?.token]);
 
   const addToFavorites = (e) => {
     e.preventDefault();
-    if (isAuth) {
+    if (session) {
       addBookToFavorites();
     } else {
-      setIsModalOpen(true);
+      router.push(`${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules`);
     }
   };
 

@@ -23,7 +23,7 @@ export default function App({ Component, pageProps }) {
   return (
     <MainLayout>
       <main
-        className={`${raleway.variable} ${montserrat.variable} font-serif font-sans`}
+        className={`${raleway.variable} ${montserrat.variable} font-serif font-sans flex-grow min-h-full flex flex-col`}
       >
         <Component {...pageProps} />
       </main>
