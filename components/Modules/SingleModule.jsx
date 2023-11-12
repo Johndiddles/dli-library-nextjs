@@ -15,6 +15,7 @@ import { useAuthContext } from "../../pages/context/authContext";
 import addFavorites from "../../globalFunctions/addBookToFavorites";
 import { useSession } from "next-auth/react";
 import { CLIENT_ORIGIN } from "../../constants/variables";
+import Tooltip from "../Tooltip/Tooltip";
 
 const SingleModule = ({ module }) => {
   const { data: session } = useSession();
@@ -113,27 +114,38 @@ const SingleModule = ({ module }) => {
               className={`flex flex-col ${styles.singleModule__actions__fav}`}
             >
               <div className="flex gap-4 justify-end text-xl mb-2 ">
-                <button
-                  className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
-                  onClick={() => {
-                    copyLink(module?.id, module?.courseTitle);
-                  }}
-                >
-                  <FaLink />
-                </button>
+                <Tooltip
+                  button={
+                    <button
+                      className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
+                      onClick={() => {
+                        copyLink(module?.id, module?.courseTitle);
+                      }}
+                    >
+                      <FaLink />
+                    </button>
+                  }
+                  tooltiptext="copy link to module"
+                />
+
                 {!router.pathname?.includes("favourite-modules") && (
                   <>
                     <span className="border-l border-l-gray-200"></span>
-                    <button
-                      className={`outline-none cursor-pointer duration-300 ${
-                        isModuleFavorite
-                          ? "text-green-600 hover:text-red-700"
-                          : "text-gray-400 hover:text-green-600"
-                      } `}
-                      onClick={addToFavorites}
-                    >
-                      <FaHeart />
-                    </button>
+                    <Tooltip
+                      button={
+                        <button
+                          className={`outline-none cursor-pointer duration-300 ${
+                            isModuleFavorite
+                              ? "text-green-600 hover:text-red-700"
+                              : "text-gray-400 hover:text-green-600"
+                          } `}
+                          onClick={addToFavorites}
+                        >
+                          <FaHeart />
+                        </button>
+                      }
+                      tooltiptext="Like"
+                    />
                   </>
                 )}
               </div>
