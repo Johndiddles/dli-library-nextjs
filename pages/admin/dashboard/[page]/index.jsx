@@ -8,16 +8,19 @@ import Sidebar from "../../../../components/AdminDashboard/Components/Sidebar";
 import Banner from "../../../../components/Banner/Banner";
 import FullScreenLoader from "../../../../components/Loader/FullLoader";
 import AdminContextProvider from "../../../context/adminAuth";
-import { useAuthContext } from "../../../context/authContext";
+// import { useAuthContext } from "../../../context/authContext";
 import UsersPanel from "../../../../components/AdminDashboard/Pages/Users";
 import SupportPanel from "../../../../components/AdminDashboard/Pages/Support";
 import Departments from "../../../../components/AdminDashboard/Pages/Departments";
 import EditModule from "../../../../components/AdminDashboard/Pages/EditModule";
+import { useSession } from "next-auth/react";
+import { ADMIN_KEY } from "../../../../constants/variables";
 
 const DashboardPages = (props) => {
   const router = useRouter();
+  const { data: session } = useSession();
   const { page } = props;
-  const { isAuth, user } = useAuthContext();
+  // const { isAuth, user } = useAuthContext();
 
   const [isReady, setIsReady] = useState(false);
 
@@ -36,17 +39,17 @@ const DashboardPages = (props) => {
 
   useEffect(() => {
     const authTimeout = setTimeout(() => {
-      if (!isAuth) {
+      if (!session) {
         router.push("/login");
       }
-      if (user.role !== "admin") {
+      if (session.user.role !== ADMIN_KEY) {
         router.push("/modules");
       }
       setIsReady(true);
     }, 2000);
 
     return () => clearTimeout(authTimeout);
-  }, [isAuth, router, user.role]);
+  }, [router, session]);
 
   return (
     <AdminContextProvider>
@@ -56,7 +59,7 @@ const DashboardPages = (props) => {
         </Head>
         {!isReady ? (
           <FullScreenLoader />
-        ) : isReady && user.role === "admin" ? (
+        ) : isReady && session.user.role === ADMIN_KEY ? (
           <div className="flex flex-col w-full h-full">
             <DashboardHeader />
             <div className="flex-grow flex w-full overflow-hidden">

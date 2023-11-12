@@ -9,7 +9,7 @@ import { HiBuildingOffice2 } from "react-icons/hi2";
 import { useRouter } from "next/router";
 
 const Sidebar = () => {
-  const { logout } = useAuthContext();
+  const router = useRouter();
   return (
     <div className="md:w-[240px] min-h-screen h-screen bg-slate-900 text-slate-200 overflow-hidden flex flex-col gap-4 ">
       <div className="w-full flex flex-col">
@@ -50,7 +50,7 @@ const Sidebar = () => {
 
           <div
             className="w-full py-3 px-4 bg-transparent rounded text-slate-500 font-semibold hover:bg-slate-500 hover:bg-opacity-50 hover:backdrop-blur-md hover:text-slate-200 duration-300 flex gap-4 items-center cursor-pointer"
-            onClick={logout}
+            onClick={() => router.push("/api/auth/signout?callbackUrl=/")}
           >
             <span>
               <IoLogOut />

@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../constants/variables";
 
-const addFavorites = async (id) => {
+const addFavorites = async (id, token) => {
   let returnMessage;
 
   try {
@@ -11,7 +11,7 @@ const addFavorites = async (id) => {
       { id },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );

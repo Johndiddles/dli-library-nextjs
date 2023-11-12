@@ -9,13 +9,16 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../constants/variables";
+import { useSession } from "next-auth/react";
 
 const AuthContext = createContext();
 
 const AuthContextProvider = ({ children }) => {
   const router = useRouter();
-  const [user, setUser] = useState({});
-  const [token, setToken] = useState(null);
+  const { data: session } = useSession();
+  const [user, setUser] = useState(session?.user);
+  const [favorite_modules, setFavorite_modules] = useState();
+  // const [token, setToken] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
 
   const [loginStatus, setLoginStatus] = useState("idle");
@@ -47,45 +50,45 @@ const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const login = async (data, next) => {
-    try {
-      setLoginStatus("pending");
-      const response = await axios.post(`${BASE_URL}/user/login`, data);
+  // const login = async (data, next) => {
+  //   try {
+  //     setLoginStatus("pending");
+  //     const response = await axios.post(`${BASE_URL}/user/login`, data);
 
-      if (response?.status === 201 || response?.status === 200) {
-        const { data } = response?.data;
-        localStorage.setItem("token", data?.token);
+  //     if (response?.status === 201 || response?.status === 200) {
+  //       const { data } = response?.data;
+  //       localStorage.setItem("token", data?.token);
 
-        console.log({ data });
+  //       console.log({ data });
 
-        setToken(() => data?.token);
-        setUser(() => data?.user);
-        setIsAuth(() => true);
+  //       // setToken(() => data?.token);
+  //       setUser(() => data?.user);
+  //       setIsAuth(() => true);
 
-        if (data?.user?.role === "admin") {
-          router.push("/admin/dashboard/index");
-        } else if (next) {
-          setTimeout(() => next(data?.token), 100);
-        }
+  //       if (data?.user?.role === "admin") {
+  //         router.push("/admin/dashboard/index");
+  //       } else if (next) {
+  //         setTimeout(() => next(data?.token), 100);
+  //       }
 
-        toast.success("Welcome Back!");
-        setLoginStatus("success");
-      }
-    } catch (error) {
-      setLoginStatus("failed");
-      toast.error(
-        error?.data?.message ?? "Unable to complete your request at the moment."
-      );
-    }
-  };
+  //       toast.success("Welcome Back!");
+  //       setLoginStatus("success");
+  //     }
+  //   } catch (error) {
+  //     setLoginStatus("failed");
+  //     toast.error(
+  //       error?.data?.message ?? "Unable to complete your request at the moment."
+  //     );
+  //   }
+  // };
 
-  const logout = () => {
-    setIsAuth(false);
-    setUser({});
-    setToken("");
-    localStorage.clear();
-    toast.success("Logged out successfully");
-  };
+  // const logout = () => {
+  //   setIsAuth(false);
+  //   setUser({});
+  //   setToken("");
+  //   localStorage.clear();
+  //   toast.success("Logged out successfully");
+  // };
 
   const verifyUser = useCallback(() => {
     const verifyUserFunc = async () => {
@@ -95,14 +98,16 @@ const AuthContextProvider = ({ children }) => {
           {},
           {
             headers: {
-              Authorization: `Bearer ${token ?? localStorage?.token}`,
+              Authorization: `Bearer ${session?.user?.token}`,
             },
           }
         );
 
         if (response?.status === 200 || response?.status === 201) {
-          setIsAuth(true);
-          setUser(response?.data?.user);
+          // setIsAuth(true);
+          // setUser(response?.data?.user);
+
+          setFavorite_modules(response.data?.user?.favorite_modules);
         }
       } catch (error) {
         // console.log({ error });
@@ -116,31 +121,22 @@ const AuthContextProvider = ({ children }) => {
     };
 
     return verifyUserFunc();
-  }, [token]);
+  }, [session?.user?.token]);
 
   useEffect(() => {
-    if (localStorage.token) {
-      setToken(localStorage?.token);
-    }
-
-    if (!isAuth && localStorage.token) {
+    if (session && session?.user?.token) {
       verifyUser();
     }
-  }, [isAuth, verifyUser]);
+  }, [session, verifyUser]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
-        token,
-        setToken,
-        isAuth,
-        setIsAuth,
-        login,
-        logout,
         loginStatus,
         setLoginStatus,
+        favorite_modules,
         verifyUser,
         signup,
         signupStatus,

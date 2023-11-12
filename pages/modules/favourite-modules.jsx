@@ -1,11 +1,13 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
 
 import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
 import SingleModule from "../../components/Modules/SingleModule";
-import { BASE_URL } from "../../constants/variables";
+import { BASE_URL, CLIENT_ORIGIN } from "../../constants/variables";
 import { BsCaretLeftFill, BsCaretRightFill, BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
@@ -17,16 +19,30 @@ import { useAuthContext } from "../context/authContext";
 import { useRouter } from "next/router";
 
 const FavouriteModules = () => {
+  const location = usePathname();
   const router = useRouter();
-  const { isAuth } = useAuthContext();
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push(
+        `${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules/favourite-modules`
+      );
+    },
+  });
 
-  if (!isAuth) {
-    router.push("/login");
-  } else {
-    return <FavouriteModulesPageContent />;
-  }
+  // const router = useRouter();
+  // const { isAuth } = useAuthContext();
+
+  // if (!isAuth) {
+  //   router.push("/login");
+  // } else {
+  //   return <FavouriteModulesPageContent />;
+  // }
+  if (session) return <FavouriteModulesPageContent />;
+  else return <></>;
 };
 const FavouriteModulesPageContent = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [allModules, setAllModules] = useState([]);
   const [fetchModulesStatus, setFetchModulesStatus] = useState("idle");
@@ -119,10 +135,9 @@ const FavouriteModulesPageContent = () => {
       setFetchModulesStatus("pending");
       const response = await axios.get(`${BASE_URL}/modules/favourites`, {
         headers: {
-          Authorization: `Bearer ${localStorage?.token}`,
+          Authorization: `Bearer ${session?.user?.token}`,
         },
       });
-      console.log(response?.data);
 
       if (response?.status === 200) {
         setAllModules(response?.data?.modules);
@@ -136,7 +151,7 @@ const FavouriteModulesPageContent = () => {
     };
 
     fetchModules();
-  }, [router]);
+  }, [router, session?.user?.token]);
 
   return (
     <div className="h-fit flex flex-col">
@@ -714,16 +729,17 @@ const FavouriteModulesPageContent = () => {
                         <SingleModule key={module?.id} module={module} />
                       ))
                   ) : (
-                    <div>No result found</div>
+                    <div>You have not liked any module.</div>
                   )}
                 </div>
-
-                <ClientSidePagination
-                  pagination={pagination}
-                  setPagination={setPagination}
-                  pageStart={pageStart}
-                  pageEnd={pageEnd}
-                />
+                {filteredList?.length > 0 && (
+                  <ClientSidePagination
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    pageStart={pageStart}
+                    pageEnd={pageEnd}
+                  />
+                )}
               </div>
             </section>
           </Container>

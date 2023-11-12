@@ -7,12 +7,14 @@ import styles from "../../../styles/Table.module.scss";
 
 // import spinner from "../../../assets/spinner.svg";
 import Spinner from "../../Loader/Spinner";
+import { useSession } from "next-auth/react";
 
 const SupportTable = () => {
+  const { data: session } = useSession();
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [messages, setMessages] = useState([]);
 
-  const token = localStorage.token;
+  const token = session.user.token;
 
   useEffect(() => {
     const fetchMessages = async () => {

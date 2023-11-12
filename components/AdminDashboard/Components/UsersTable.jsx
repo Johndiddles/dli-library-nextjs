@@ -6,12 +6,14 @@ import styles from "../../../styles/Table.module.scss";
 
 import spinner from "../../../assets/spinner.svg";
 import Spinner from "../../Loader/Spinner";
+import { useSession } from "next-auth/react";
 
 const UsersTable = () => {
+  const { data: session } = useSession();
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [users, setUsers] = useState([]);
 
-  const token = localStorage.token;
+  const token = session.user.token;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,7 +57,7 @@ const UsersTable = () => {
           className={`${styles.table__row} ${styles.users__table__row}`}
         >
           <td>{index + 1}</td>
-          <td>{`${user?.first_name} ${user?.last_name ?? ""}`}</td>
+          <td>{user.name}</td>
           <td className={`${styles.users__table__email}`}>{user?.email}</td>
           <td>{user?.role === "user" ? "User" : "Admin"}</td>
           <td>
