@@ -21,7 +21,7 @@ const AddDepartmentForm = ({ setFetchStatus }) => {
   const createDepartment = async (e) => {
     e.preventDefault();
 
-    console.log({ details });
+    // console.log({ details });
     setIsSubmitting(true);
     try {
       const response = await axios.post(

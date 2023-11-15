@@ -81,6 +81,26 @@
   }
 }
 
+.pastQuestions {
+  &__table {
+    &__row {
+      grid-template-columns:
+        50px minmax(50px, 150px)
+        minmax(70px, 1fr) minmax(50px, 1fr) minmax(50px, 200px) minmax(
+          70px,
+          200px
+        )
+        minmax(70px, 1fr)
+        minmax(50px, 100px);
+      text-transform: initial;
+
+      td {
+        text-transform: capitalize !important;
+      }
+    }
+  }
+}
+
 .support {
   &__table {
     &__row {

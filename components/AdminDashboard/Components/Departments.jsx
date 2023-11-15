@@ -8,7 +8,7 @@ const DepartmentsList = ({ fetchStatus, setFetchStatus }) => {
     const fetchDepartments = async () => {
       setFetchStatus("pending");
       const response = await axiosInstance("departments");
-      console.log({ response });
+      // console.log({ response });
 
       if (response?.status === 200) {
         setDepartments(response?.data);

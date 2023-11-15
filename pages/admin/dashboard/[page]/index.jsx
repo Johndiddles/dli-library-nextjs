@@ -15,6 +15,9 @@ import Departments from "../../../../components/AdminDashboard/Pages/Departments
 import EditModule from "../../../../components/AdminDashboard/Pages/EditModule";
 import { useSession } from "next-auth/react";
 import { ADMIN_KEY } from "../../../../constants/variables";
+import AddPastQuestion from "../../../../components/AdminDashboard/Pages/AddPastQuestion";
+import PastQuestions from "../../../../components/AdminDashboard/Pages/PastQuestions";
+import EditPastQuestion from "../../../../components/AdminDashboard/Pages/EditPastQuestion";
 
 const DashboardPages = (props) => {
   const router = useRouter();
@@ -26,7 +29,10 @@ const DashboardPages = (props) => {
 
   const dashboardRoutes = useRef({
     "add-module": <AddModule page={page} />,
+    "add-past-question": <AddPastQuestion page={page} />,
     "edit-module": <EditModule page={page} />,
+    "past-questions": <PastQuestions page={page} />,
+    "edit-past-question": <EditPastQuestion page={page} />,
     index: <Dashboard page={page} />,
     users: <UsersPanel />,
     support: <SupportPanel />,

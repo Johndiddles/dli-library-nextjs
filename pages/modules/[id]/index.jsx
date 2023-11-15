@@ -12,7 +12,7 @@ import React, {
   useState,
 } from "react";
 import { BsCloudDownload } from "react-icons/bs";
-import { FaHeart, FaLink } from "react-icons/fa";
+import { FaHandPointRight, FaHeart, FaLink } from "react-icons/fa";
 import Banner from "../../../components/Banner/Banner";
 import ButtonSpinner from "../../../components/Loader/ButtonSpinner";
 import FullScreenLoader from "../../../components/Loader/FullLoader";
@@ -23,6 +23,7 @@ import { useAuthContext } from "../../context/authContext";
 // import { useLoginModalContext } from "../../context/loginModalContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
+import Link from "next/link";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -42,6 +43,8 @@ const SingleModulePage = () => {
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [moduleDetails, setModuleDetails] = useState({});
   const [module, setModule] = useState(null);
+  // const [departments, setDepartments] = useState([]);
+  const [pastQuestions, setPastQuestions] = useState([]);
 
   const [downloading, setDownloading] = useState(false);
 
@@ -80,8 +83,21 @@ const SingleModulePage = () => {
       // const fileURL = window.URL.createObjectURL(moduleResponse?.data);
     };
 
+    const fetchResources = async () => {
+      // const departmentResponse = await axios.get(`${BASE_URL}/departments`);
+      const pastQuestionsResponse = await axios.get(
+        `${BASE_URL}/past-questions/get-past-questions-by-course-id/${id}`
+      );
+
+      // setDepartments(departmentResponse?.data);
+      setPastQuestions(pastQuestionsResponse?.data);
+    };
+
     id && fetchModule();
+    id && fetchResources();
   }, [id]);
+
+  console.log({ pastQuestions });
 
   const downloadBook = async (id) => {
     setDownloading(true);
@@ -157,60 +173,82 @@ const SingleModulePage = () => {
             />
             <Container>
               <section className="px-4 py-8">
-                <div className="flex gap-4 sm:gap-8 lg:gap-10">
-                  <div className="py-8 flex flex-col items-center lg:items-start gap-4 w-fit lg:w-[200px] lg:min-w-[200px]">
-                    <div className="flex items-center gap-4">
-                      <button
-                        className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
-                        onClick={() => {
-                          copyLink(id, moduleDetails?.courseTitle);
-                        }}
-                      >
-                        <FaLink />{" "}
-                        <span className="hidden lg:block text-gray-500">
-                          Copy to clipboard
-                        </span>
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button
-                        className={`outline-none cursor-pointer text-left duration-300 text-gray-400 ${
-                          isBookFavorites
-                            ? "hover:text-red-700"
-                            : "hover:text-green-600"
-                        } flex items-center gap-4`}
-                        onClick={addToFavorites}
-                      >
-                        <FaHeart />{" "}
-                        <span
-                          className={`hidden lg:block text-gray-500 ${
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-10">
+                  <div className="py-4 lg:py-4 flex flex-col items-center lg:items-start gap-4 w-full lg:w-[200px] lg:min-w-[200px]">
+                    <div className="flex lg:flex-col justify-center flex-wrap items-center lg:items-start gap-4 sm:gap-8 w-full lg:w-[200px] lg:min-w-[200px]">
+                      <div className="flex items-center gap-4">
+                        <button
+                          className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
+                          onClick={() => {
+                            copyLink(id, moduleDetails?.courseTitle, "modules");
+                          }}
+                        >
+                          <FaLink />{" "}
+                          <span className=" text-gray-500">Copy Link</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <button
+                          className={`outline-none cursor-pointer text-left duration-300 text-gray-400 ${
                             isBookFavorites
                               ? "hover:text-red-700"
                               : "hover:text-green-600"
-                          }`}
+                          } flex items-center gap-4`}
+                          onClick={addToFavorites}
                         >
-                          {isBookFavorites ? "Remove from" : "Add to"} favorites
-                        </span>
-                      </button>
+                          <FaHeart />{" "}
+                          <span
+                            className={` text-gray-500 ${
+                              isBookFavorites
+                                ? "hover:text-red-700"
+                                : "hover:text-green-600"
+                            }`}
+                          >
+                            {isBookFavorites ? "Remove from" : "Add to"}{" "}
+                            favorites
+                          </span>
+                        </button>
+                      </div>
+                      <div className="w-fit lg:w-full">
+                        <button
+                          className="w-full text-center flex items-center gap-4 justify-between py-2 pl-4 pr-1 rounded-sm font-semibold text-sm duration-300 border border-gray-600 bg-gray-600 text-white hover:bg-gray-800 hover:border-gray-800"
+                          onClick={() => downloadBook(module?.id)}
+                          disabled={downloading}
+                        >
+                          <div className="flex-grow text-center">
+                            {downloading ? (
+                              <ButtonSpinner color="white" />
+                            ) : (
+                              "Download"
+                            )}
+                          </div>
+                          <span className="lg:border-l border-l-gray-100 px-3">
+                            <BsCloudDownload />
+                          </span>
+                        </button>
+                      </div>
                     </div>
-                    <div className="w-full">
-                      <button
-                        className="w-full text-center flex items-center gap-4 justify-between py-2 rounded-sm font-semibold text-sm duration-300 border border-gray-600 bg-gray-600 text-white hover:bg-gray-800 hover:border-gray-800"
-                        onClick={() => downloadBook(module?.id)}
-                        disabled={downloading}
-                      >
-                        <div className="hidden lg:block flex-grow text-center">
-                          {downloading ? (
-                            <ButtonSpinner color="white" />
-                          ) : (
-                            "Download"
-                          )}
+
+                    {pastQuestions?.length > 0 && (
+                      <div className="border-t border-t-gray-300 border-opacity-50 pt-4 lg:mt-4 w-full flex flex-col justify-center lg:justify-start">
+                        <div className="font-extrabold uppercase text-gray-500 text-base text-center lg:text-left">
+                          Past Questions
                         </div>
-                        <span className="lg:border-l border-l-gray-100 px-3">
-                          <BsCloudDownload />
-                        </span>
-                      </button>
-                    </div>
+                        <div className="flex gap-4 justify-center lg:justify-start flex-wrap w-full">
+                          {pastQuestions?.map((question) => (
+                            <div key={question?.id} className="mt-2 py-2 w-fit">
+                              <Link
+                                key={question?.id}
+                                href={`/past-questions/${question?.id}`}
+                                className="flex gap-2 items-center hover:underline"
+                              >
+                                {question?.session} <FaHandPointRight />
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* open book preview here */}
