@@ -16,17 +16,20 @@ import Container from "../../components/Container/Container";
 
 export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/modules`);
+  const departmentResponse = await fetch(`${BASE_URL}/departments`);
 
   const allModules = await response?.json();
+  const allDepartments = await departmentResponse?.json();
 
   return {
     props: {
       allModules,
+      allDepartments,
     },
   };
 }
 
-const Modules = ({ allModules }) => {
+const Modules = ({ allModules, allDepartments }) => {
   // const allModules = JSON.parse(modules);
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -158,48 +161,67 @@ const Modules = ({ allModules }) => {
               <div
                 className={`overflow-hidden ${filtersOpen ? "h-full" : "h-0"}`}
               >
-                <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                  <div
-                    className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                    onClick={() => toggleMenu("department")}
-                  >
-                    Department{" "}
-                    <span className="text-sm text-gray-400 capitalize">
-                      {filters?.department !== ""
-                        ? `(${filters?.department})`
-                        : ""}
-                    </span>
-                    <span
-                      className={`duration-300 text-2xl ${
-                        activeMenu === "department"
-                          ? "rotate-180 text-gray-700"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <BiChevronDown />
-                    </span>
-                  </div>
-                  <div
-                    className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                      activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
-                    }`}
-                  >
+                {allDepartments?.length > 0 && (
+                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
                     <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === ""
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: "",
-                        });
-                      }}
+                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
+                      onClick={() => toggleMenu("department")}
                     >
-                      All Departments
+                      Department{" "}
+                      <span className="text-sm text-gray-400 capitalize">
+                        {filters?.department !== ""
+                          ? `(${filters?.department})`
+                          : ""}
+                      </span>
+                      <span
+                        className={`duration-300 text-2xl ${
+                          activeMenu === "department"
+                            ? "rotate-180 text-gray-700"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <BiChevronDown />
+                      </span>
                     </div>
                     <div
+                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
+                        activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
+                      }`}
+                    >
+                      <div
+                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                          filters?.department === ""
+                            ? "text-gray-700 font-semibold"
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          toggleMenu("department");
+                          setFilters({
+                            department: "",
+                          });
+                        }}
+                      >
+                        All Departments
+                      </div>
+                      {allDepartments?.map((dept) => (
+                        <div
+                          key={dept?._id}
+                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                            filters?.department === dept?.value
+                              ? "text-gray-700 font-semibold"
+                              : ""
+                          }`}
+                          onClick={(e) => {
+                            toggleMenu("department");
+                            setFilters({
+                              department: dept?.value?.toLowerCase(),
+                            });
+                          }}
+                        >
+                          {dept?.title}
+                        </div>
+                      ))}
+                      {/* <div
                       className={`hover:text-gray-700 duration-300 cursor-pointer ${
                         filters?.department === "accounting"
                           ? "text-gray-700 font-semibold"
@@ -273,9 +295,10 @@ const Modules = ({ allModules }) => {
                       }}
                     >
                       General
+                    </div> */}
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
                   <div
@@ -419,42 +442,61 @@ const Modules = ({ allModules }) => {
               </div>
 
               <div>
-                <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                  <div
-                    className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                    onClick={() => toggleMenu("department")}
-                  >
-                    Department{" "}
-                    <span
-                      className={`duration-300 text-2xl ${
-                        activeMenu === "department"
-                          ? "rotate-180 text-gray-700"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <BiChevronDown />
-                    </span>
-                  </div>
-                  <div
-                    className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                      activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
-                    }`}
-                  >
+                {allDepartments?.length > 0 && (
+                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
                     <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === ""
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: "",
-                        })
-                      }
+                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
+                      onClick={() => toggleMenu("department")}
                     >
-                      All Departments
+                      Department{" "}
+                      <span
+                        className={`duration-300 text-2xl ${
+                          activeMenu === "department"
+                            ? "rotate-180 text-gray-700"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <BiChevronDown />
+                      </span>
                     </div>
                     <div
+                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
+                        activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
+                      }`}
+                    >
+                      <div
+                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                          filters?.department === ""
+                            ? "text-gray-700 font-semibold"
+                            : ""
+                        }`}
+                        onClick={(e) =>
+                          setFilters({
+                            department: "",
+                          })
+                        }
+                      >
+                        All Departments
+                      </div>
+                      {allDepartments?.map((dept) => (
+                        <div
+                          key={dept?._id}
+                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                            filters?.department === dept?.value
+                              ? "text-gray-700 font-semibold"
+                              : ""
+                          }`}
+                          onClick={(e) => {
+                            toggleMenu("department");
+                            setFilters({
+                              department: dept?.value?.toLowerCase(),
+                            });
+                          }}
+                        >
+                          {dept?.title}
+                        </div>
+                      ))}
+                      {/* <div
                       className={`hover:text-gray-700 duration-300 cursor-pointer ${
                         filters?.department === "accounting"
                           ? "text-gray-700 font-semibold"
@@ -523,9 +565,10 @@ const Modules = ({ allModules }) => {
                       }
                     >
                       General
+                    </div> */}
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
                   <div

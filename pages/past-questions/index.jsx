@@ -1,17 +1,14 @@
 "use client";
 
-import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
-import SingleModule from "../../components/Modules/SingleModule";
 import { BASE_URL } from "../../constants/variables";
-import { BsCaretLeftFill, BsCaretRightFill, BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
 import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
-import FullScreenLoader from "../../components/Loader/FullLoader";
 import Container from "../../components/Container/Container";
 import SinglePastQuestion from "../../components/PastQuestions/SinglePastQuestion";
 
@@ -132,11 +129,11 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
   return (
     <div className="h-fit flex flex-col">
       <Head>
-        <title>Download Modules</title>
+        <title>Download Past Questions</title>
       </Head>
 
       <Banner
-        title="Modules"
+        title="Past Questions"
         imgUrl="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1673&q=80"
       />
 
@@ -820,12 +817,14 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
               <>
                 {(filters?.department !== "" ||
                   filters?.level !== "" ||
-                  filters?.search !== "") && (
+                  filters?.search !== "" ||
+                  filters?.session !== "") && (
                   <div className="mb-2 flex text-sm text-gray-700 text-opacity-80 items-center">
                     Showing results for{" "}
                     {filters?.department &&
                       `${filters?.department} department, `}
                     {filters?.level && `${filters?.level} level, `}
+                    {filters?.session && `${filters?.session}, session`}
                     {filters?.search && `keyword: ${filters?.search}.`}
                     <span>
                       <button

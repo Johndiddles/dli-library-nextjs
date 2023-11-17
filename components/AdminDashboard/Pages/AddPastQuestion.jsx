@@ -126,8 +126,11 @@ const AddPastQuestion = ({ page }) => {
             resetForm();
           }
         } catch (error) {
-          // console.log({ error });
-          toast.error("failed to upload book...");
+          if (error.response?.status === 400) {
+            toast.error(error?.response?.data?.message);
+          } else {
+            toast.error("failed to upload book...");
+          }
           setAddStatus("failed");
         }
       }

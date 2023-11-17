@@ -5,24 +5,28 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, {
-  useCallback,
-  useContext,
+  // useCallback,
+  // useContext,
   useEffect,
-  useMemo,
+  // useMemo,
   useState,
 } from "react";
 import { BsCloudDownload } from "react-icons/bs";
-import { FaHeart, FaLink } from "react-icons/fa";
+import {
+  // FaHeart,
+  FaLink,
+} from "react-icons/fa";
 import Banner from "../../../components/Banner/Banner";
 import ButtonSpinner from "../../../components/Loader/ButtonSpinner";
 import FullScreenLoader from "../../../components/Loader/FullLoader";
 import { BASE_URL, CLIENT_ORIGIN } from "../../../constants/variables";
-import addFavorites from "../../../globalFunctions/addBookToFavorites";
+// import addFavorites from "../../../globalFunctions/addBookToFavorites";
 import copyLink from "../../../globalFunctions/copyModuleLink";
 import { useAuthContext } from "../../context/authContext";
 // import { useLoginModalContext } from "../../context/loginModalContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
+import { MdLibraryBooks } from "react-icons/md";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -86,15 +90,13 @@ const SinglePastQuestionPage = () => {
   const downloadBook = async (id) => {
     setDownloading(true);
 
-    // console.log({ book, error, status, message });
-
-    if (module) {
+    if (pastQuestion) {
       setDownloading(false);
-      const fileURL = window.URL.createObjectURL(module);
+      const fileURL = window.URL.createObjectURL(pastQuestion);
 
       let alink = document.createElement("a");
       alink.href = fileURL;
-      alink.download = `${pastQuestionDetails.courseCode} - ${pastQuestionDetails?.courseTitle}.pdf`;
+      alink.download = `PQ - ${pastQuestionDetails.courseCode} - ${pastQuestionDetails?.courseTitle}.pdf`;
       alink.click();
     } else {
       setDownloading(false);
@@ -161,7 +163,25 @@ const SinglePastQuestionPage = () => {
             <Container>
               <section className="px-4 py-8">
                 <div className="flex gap-4 sm:gap-8 lg:gap-10">
-                  <div className="py-8 flex flex-col items-center lg:items-start gap-4 w-fit lg:w-[200px] lg:min-w-[200px]">
+                  <div className="py-8 flex flex-col items-center lg:items-start gap-6 sm:gap-4 w-fit lg:w-[200px] lg:min-w-[200px]">
+                    <div className="flex items-center gap-4">
+                      <button
+                        className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
+                        onClick={() =>
+                          router.push(
+                            `/modules/${pastQuestionDetails?.courseId}`
+                          )
+                        }
+                      >
+                        <span className="text-xl lg:text-base">
+                          <MdLibraryBooks />
+                        </span>
+                        <span className="hidden lg:block text-gray-500">
+                          {" "}
+                          Go to Module
+                        </span>
+                      </button>
+                    </div>
                     <div className="flex items-center gap-4">
                       <button
                         className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
@@ -173,14 +193,17 @@ const SinglePastQuestionPage = () => {
                           );
                         }}
                       >
-                        <FaLink />{" "}
+                        <span className="text-xl lg:text-base">
+                          <FaLink />
+                        </span>
                         <span className="hidden lg:block text-gray-500">
+                          {" "}
                           Copy link
                         </span>
                       </button>
                     </div>
-                    <div className="flex items-center gap-4">
-                      {/* <button
+                    {/* <div className="flex items-center gap-4">
+                      <button
                         className={`outline-none cursor-pointer text-left duration-300 text-gray-400 ${
                           isBookFavorites
                             ? "hover:text-red-700"
@@ -198,8 +221,9 @@ const SinglePastQuestionPage = () => {
                         >
                           {isBookFavorites ? "Remove from" : "Add to"} favorites
                         </span>
-                      </button> */}
-                    </div>
+                      </button>
+                    </div> */}
+
                     <div className="w-full">
                       <button
                         className="w-full text-center flex items-center gap-4 justify-between py-2 rounded-sm font-semibold text-sm duration-300 border border-gray-600 bg-gray-600 text-white hover:bg-gray-800 hover:border-gray-800"

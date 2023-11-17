@@ -174,11 +174,11 @@ const SingleModulePage = () => {
             <Container>
               <section className="px-4 py-8">
                 <div className="flex flex-col lg:flex-row gap-4 lg:gap-10">
-                  <div className="py-4 lg:py-4 flex flex-col items-center lg:items-start gap-4 w-full lg:w-[200px] lg:min-w-[200px]">
-                    <div className="flex lg:flex-col justify-center flex-wrap items-center lg:items-start gap-4 sm:gap-8 w-full lg:w-[200px] lg:min-w-[200px]">
+                  <div className="py-1 lg:py-4 flex flex-col items-center lg:items-start gap-4 w-full lg:w-[200px] lg:min-w-[200px]">
+                    <div className="flex lg:flex-col justify-center flex-wrap items-center lg:items-start gap-4 sm:gap-8 lg:gap-4 w-full lg:w-[200px] lg:min-w-[200px]">
                       <div className="flex items-center gap-4">
                         <button
-                          className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
+                          className="outline-none cursor-pointer text-left text-sm md:text-base duration-300 text-gray-400 hover:text-green-600 flex items-center gap-1 md:gap-4"
                           onClick={() => {
                             copyLink(id, moduleDetails?.courseTitle, "modules");
                           }}
@@ -189,11 +189,11 @@ const SingleModulePage = () => {
                       </div>
                       <div className="flex items-center gap-4">
                         <button
-                          className={`outline-none cursor-pointer text-left duration-300 text-gray-400 ${
+                          className={`outline-none cursor-pointer text-left text-sm md:text-base duration-300 text-gray-400 ${
                             isBookFavorites
                               ? "hover:text-red-700"
                               : "hover:text-green-600"
-                          } flex items-center gap-4`}
+                          } flex items-center gap-1 md:gap-4`}
                           onClick={addToFavorites}
                         >
                           <FaHeart />{" "}
@@ -211,7 +211,7 @@ const SingleModulePage = () => {
                       </div>
                       <div className="w-fit lg:w-full">
                         <button
-                          className="w-full text-center flex items-center gap-4 justify-between py-2 pl-4 pr-1 rounded-sm font-semibold text-sm duration-300 border border-gray-600 bg-gray-600 text-white hover:bg-gray-800 hover:border-gray-800"
+                          className="w-full text-center flex items-center gap-1 md:gap-4 justify-between py-2 pl-4 pr-1 rounded-sm font-semibold text-sm duration-300 border border-gray-600 bg-gray-600 text-white hover:bg-gray-800 hover:border-gray-800"
                           onClick={() => downloadBook(module?.id)}
                           disabled={downloading}
                         >
@@ -222,7 +222,7 @@ const SingleModulePage = () => {
                               "Download"
                             )}
                           </div>
-                          <span className="lg:border-l border-l-gray-100 px-3">
+                          <span className="lg:border-l border-l-gray-100 px-2">
                             <BsCloudDownload />
                           </span>
                         </button>
@@ -234,13 +234,16 @@ const SingleModulePage = () => {
                         <div className="font-extrabold uppercase text-gray-500 text-base text-center lg:text-left">
                           Past Questions
                         </div>
-                        <div className="flex gap-4 justify-center lg:justify-start flex-wrap w-full">
+                        <div className="flex gap-4 lg:gap-2 py-0 lg:py-4 justify-center lg:justify-start flex-wrap w-full">
                           {pastQuestions?.map((question) => (
-                            <div key={question?.id} className="mt-2 py-2 w-fit">
+                            <div
+                              key={question?.id}
+                              className="lg:mt-0 py-1 lg:py-0 w-fit"
+                            >
                               <Link
                                 key={question?.id}
                                 href={`/past-questions/${question?.id}`}
-                                className="flex gap-2 items-center hover:underline"
+                                className="text-sm md:text-base flex gap-2 items-center hover:underline"
                               >
                                 {question?.session} <FaHandPointRight />
                               </Link>
