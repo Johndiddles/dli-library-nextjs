@@ -17,14 +17,14 @@ const Header = () => {
         <BrandAndLogo />
       </div>
 
-      <div className="flex-grow hidden sm:flex justify-end items-center gap-10">
+      <div className="flex-grow hidden lg:flex justify-end items-center gap-10">
         <Navigation />
         <NavProfile />
       </div>
 
       <MobileNavigation toggleNavbar={toggleNavbar} openNav={openNav} />
 
-      <div className="sm:hidden">
+      <div className="lg:hidden">
         <button onClick={toggleNavbar}>
           <FaBars />
         </button>

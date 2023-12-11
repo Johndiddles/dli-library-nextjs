@@ -20,15 +20,28 @@ const Sidebar = () => {
           <SidebarLink
             url="/admin/dashboard/index"
             slug="index"
-            name="Dashboard"
+            name="Modules"
             icon={<MdSpaceDashboard />}
           />
-          <SidebarLink
+          {/* <SidebarLink
             url="/admin/dashboard/add-module"
             slug="add-module"
             name="Add Module"
             icon={<BiBookAdd />}
+          /> */}
+
+          <SidebarLink
+            url="/admin/dashboard/past-questions"
+            slug="past-questions"
+            name="Past Questions"
+            icon={<BiBookAdd />}
           />
+          {/* <SidebarLink
+            url="/admin/dashboard/add-past-question"
+            slug="add-past-question"
+            name="Add Past Question"
+            icon={<BiBookAdd />}
+          /> */}
           <SidebarLink
             url="/admin/dashboard/departments"
             slug="departments"

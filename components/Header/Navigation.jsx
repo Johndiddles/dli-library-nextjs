@@ -51,6 +51,12 @@ const Navigation = ({ mobile, toggleNavbar }) => {
       <NavbarLink
         toggleNavbar={toggleNavbar}
         mobile={mobile}
+        name="Past Questions"
+        href="/past-questions"
+      />
+      <NavbarLink
+        toggleNavbar={toggleNavbar}
+        mobile={mobile}
         name="Contact Us"
         href="/contact"
       />
@@ -62,10 +68,10 @@ export default Navigation;
 
 const NavbarLink = ({ name, href, mobile, toggleNavbar }) => (
   <Link
-    className={`hover:text-green-600  font-extrabold  duration-300  uppercase hover:border-green-600 ${
+    className={`hover:text-green-600 font-extrabold duration-300 uppercase hover:border-green-600 ${
       mobile
-        ? " border-b-gray-50 border-opacity-5 w-full flex items-center justify-center py-5 text-3xl"
-        : "border-b-2 border-b-transparent py-1 hover:scale-110 font-montserrat"
+        ? " border-b-gray-50 border-opacity-5 w-full flex items-center justify-center py-4 text-2xl"
+        : "border-b-2 border-b-transparent py-1 hover:scale-110 font-montserrat text-sm text-center"
     }`}
     style={{
       textShadow: mobile ? "" : "0 2px 4px rgba(0,0,0,1)",

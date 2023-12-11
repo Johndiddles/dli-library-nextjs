@@ -16,10 +16,10 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-const EditModule = ({ page }) => {
-  const { data: session } = useSession();
+const EditPastQuestion = ({ page }) => {
+  const { data: userSession } = useSession();
   const router = useRouter();
-  const { moduleId } = router.query;
+  const { pastQuestionId } = router.query;
 
   //   const { uploadImage } = useImageUpload();
   const { setActivePage } = useAdminContext();
@@ -45,15 +45,21 @@ const EditModule = ({ page }) => {
     if (fetchStatus === "idle") fetchDepartments();
   }, [fetchStatus, setFetchStatus]);
 
-  const [fetchModuleStatus, setFetchModuleStatus] = useState("idle");
+  const [fetchPastQuestionStatus, setFetchPastQuestionStatus] =
+    useState("idle");
+  const [fetchModulesStatus, setFetchModulesStatus] = useState("idle");
+
+  const [allModules, setAllModules] = useState([]);
+
+  const [id, setId] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
-  const [department, setDepartment] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [session, setSession] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
   const [level, setLevel] = useState("");
-  const urlRef = useRef(null);
-  const [rawFile, setRawFile] = useState({});
-
-  const [imageUrl, setImageUrl] = useState("");
+  const [likes, setLikes] = useState("");
 
   const [updateStatus, setUpdateStatus] = useState("idle");
 
@@ -86,32 +92,37 @@ const EditModule = ({ page }) => {
   }, [updateStatus]);
 
   const resetForm = () => {
+    setCourseId("");
     setCourseCode("");
     setCourseTitle("");
-    setDepartment([]);
+    setDepartments([]);
+    setThumbnail("");
+    setSession("");
     setLevel("");
-    setImageUrl("");
-    setRawFile({});
   };
 
   const updateModule = async (e) => {
     e.preventDefault();
 
-    const token = session.user.token;
+    const token = userSession.user.token;
 
     setUpdateStatus("pending");
     try {
       const payload = {
+        id,
+        courseId,
         courseCode,
         courseTitle,
         level,
-        department: department?.join(","),
-        thumbnail: imageUrl,
+        departments,
+        thumbnail,
+        session,
+        likes,
       };
 
       try {
         const response = await axios.patch(
-          `${BASE_URL}/modules/update/${moduleId}`,
+          `${BASE_URL}/past-questions/update/${pastQuestionId}`,
           payload,
           {
             headers: {
@@ -121,11 +132,11 @@ const EditModule = ({ page }) => {
         );
 
         setUpdateStatus("success");
-        toast.success(`successfully updated ${courseTitle}`);
+        toast.success(`successfully updated past question`);
         resetForm();
-        router.push("/admin/dashboard/index");
+        router.push("/admin/dashboard/past-questions");
       } catch (error) {
-        alert("failed to upload book ");
+        alert("failed to update past question");
         setUpdateStatus("failed");
       }
     } catch (error) {
@@ -134,31 +145,45 @@ const EditModule = ({ page }) => {
   };
 
   useEffect(() => {
-    const getModule = async () => {
-      setFetchModuleStatus("pending");
+    const getPastQuestion = async () => {
+      setFetchPastQuestionStatus("pending");
       try {
         const response = await axios.get(
-          `${BASE_URL}/modules/get-single-module/${moduleId}`
+          `${BASE_URL}/past-questions/get-single-past-question/${pastQuestionId}`
         );
 
-        const fetchedModule = response?.data;
-        setCourseCode(fetchedModule.courseCode);
-        setCourseTitle(fetchedModule.courseTitle);
-        setDepartment(fetchedModule.department?.split(","));
-        setLevel(fetchedModule.level);
-        setImageUrl(fetchedModule.thumbnail);
+        setFetchModulesStatus("pending");
+        const modulesResponse = await axiosInstance("modules");
 
-        setFetchModuleStatus("success");
+        if (modulesResponse?.status === 200) {
+          setAllModules(modulesResponse?.data);
+          setFetchModulesStatus("success");
+        } else {
+          setFetchModulesStatus("failed");
+        }
+
+        const fetchedPastQuestion = response?.data;
+        setId(fetchedPastQuestion?.id);
+        setCourseCode(fetchedPastQuestion.courseCode);
+        setCourseTitle(fetchedPastQuestion.courseTitle);
+        setDepartments(fetchedPastQuestion.departments);
+        setLevel(fetchedPastQuestion.level);
+        setThumbnail(fetchedPastQuestion.thumbnail);
+        setLikes(fetchedPastQuestion?.likes);
+        setSession(fetchedPastQuestion?.session);
+        setCourseId(fetchedPastQuestion?.courseId);
+
+        setFetchPastQuestionStatus("success");
       } catch (error) {
-        setFetchModuleStatus("failed");
+        setFetchPastQuestionStatus("failed");
       }
     };
 
-    if (moduleId && fetchModuleStatus === "idle") getModule();
-  }, [moduleId, fetchModuleStatus]);
+    if (pastQuestionId && fetchPastQuestionStatus === "idle") getPastQuestion();
+  }, [pastQuestionId, fetchPastQuestionStatus]);
 
-  if (!moduleId) {
-    toast.error("no module selected");
+  if (!pastQuestionId) {
+    toast.error("no past question selected selected");
     router.push("/admin/dashboard/index");
     return;
   }
@@ -166,7 +191,7 @@ const EditModule = ({ page }) => {
   return (
     <div className="h-fit flex flex-col">
       <Head>
-        <title>Edit Modules</title>
+        <title>Edit Past Questions</title>
       </Head>
 
       <div className="dashboard py-2 flex flex-col items-center justify-center gap-8 w-full text-slate-800">
@@ -179,11 +204,11 @@ const EditModule = ({ page }) => {
           <div className="dashboard-form flex flex-col gap-4 w-full">
             <div className="w-full flex justify-between items-center gap-10 pb-4 border-b border-b-slate-900 border-opacity-5">
               <p className="dashboard-form__header font-montserrat font-semibold text-lg text-slate-800 ">
-                Edit Modules
+                Edit Past Question
               </p>
 
               <Link
-                href="/admin/dashboard/index"
+                href="/admin/dashboard/past-questions"
                 className="flex gap-2 items-center hover:scale-105 duration-300"
               >
                 <FaArrowLeft /> Back
@@ -192,24 +217,55 @@ const EditModule = ({ page }) => {
             <form className="w-full rounded-2xl flex flex-col gap-4 backdrop-blur-sm">
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
                 <label className="label font-semibold">Course Code</label>
-                <input
+                <select
                   className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
                   style={{
                     border: "1px solid rgba(125, 125, 125, 0.125)",
                     boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
                   }}
                   name="courseCode"
-                  type="text"
                   id="courseCode"
                   placeholder="Course Code"
-                  value={courseCode}
-                  onChange={(e) => setCourseCode(e.target.value)}
-                />
+                  value={courseId}
+                  onChange={(e) => {
+                    const selectedModule = allModules?.find(
+                      (module) => module?.id === e.target.value
+                    );
+
+                    setCourseCode(selectedModule?.courseCode);
+                    setCourseTitle(selectedModule?.courseTitle);
+                    setLevel(selectedModule?.level);
+                    setDepartments(selectedModule?.department?.split(","));
+                    setCourseId(e.target.value);
+                  }}
+                >
+                  <option value="">Select Course Code</option>
+                  {allModules
+                    ?.sort((a, b) => {
+                      if (
+                        a?.courseCode?.toLowerCase() <
+                        b.courseCode?.toLowerCase()
+                      ) {
+                        return -1;
+                      }
+                      if (
+                        a?.courseCode?.toLowerCase() >
+                        b.courseCode?.toLowerCase()
+                      ) {
+                        return 1;
+                      }
+                    })
+                    ?.map((module) => (
+                      <option key={module?.id} value={module?.id}>
+                        {module?.courseCode}
+                      </option>
+                    ))}
+                </select>
               </div>
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
                 <label className="label font-semibold">Course Title</label>
                 <input
-                  className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
+                  className="px-3 py-[10px] font-normal border border-gray-200 bg-gray-200 text-gray-500 rounded-lg outline-none"
                   style={{
                     border: "1px solid rgba(125, 125, 125, 0.125)",
                     boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
@@ -220,117 +276,22 @@ const EditModule = ({ page }) => {
                   placeholder="Course Title"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
+                  disabled
                 />
               </div>
 
               <div className="form-group flex flex-col gap-2 text-sm font-semibold">
-                <label className="label">Department</label>
-                <div className="border border-gray-200 rounded-lg px-3 py-[10px] font-normal flex gap-4">
-                  {fetchStatus === "pending" ? (
-                    <>
-                      <Spinner />
-                    </>
-                  ) : allDepartments?.length === 0 ? (
-                    <div className="text-sm">no department found</div>
-                  ) : (
-                    allDepartments?.map((dept) => (
-                      <div
-                        key={dept.value}
-                        className={`flex gap-2 items-center w-fit py-2 px-4 ${
-                          department?.includes(dept.value)
-                            ? "bg-gray-700 text-gray-100"
-                            : "bg-gray-100"
-                        } hover:bg-gray-700 hover:text-gray-100 duration-300 cursor-pointer rounded`}
-                        onClick={() => {
-                          if (department?.includes(dept.value)) {
-                            setDepartment((prev) =>
-                              prev.filter((prevData) => prevData !== dept.value)
-                            );
-                          } else {
-                            setDepartment((prev) => [...prev, dept.value]);
-                          }
-                        }}
-                      >
-                        {department?.includes(dept?.value) ? (
-                          <span>
-                            <MdCancel className="" />
-                          </span>
-                        ) : (
-                          <div
-                            className={`w-3 h-3 rounded-full border border-gray-300 ${
-                              department?.includes(dept?.value)
-                                ? "bg-gray-100"
-                                : "bg-transparent"
-                            }`}
-                          ></div>
-                        )}
-                        {dept.title}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              <div className="form-group flex flex-col gap-2 text-sm font-semibold">
-                <label className="label">Level</label>
-                <select
-                  name="level"
+                <label className="label">Session</label>
+                <input
+                  name="session"
                   type="text"
-                  id="level"
-                  placeholder="Level"
-                  value={level}
-                  onChange={(e) => setLevel(e.target.value)}
+                  id="session"
+                  placeholder="2005/2006"
+                  value={session}
+                  onChange={(e) => setSession(e.target.value)}
                   className="px-3 py-[10px] font-normal border border-gray-200 rounded-lg outline-none"
-                >
-                  <option value="">Select Level</option>
-                  <option value="100">100</option>
-                  <option value="200">200</option>
-                  <option value="300">300</option>
-                  <option value="400">400</option>
-                  <option value="500">500</option>
-                  <option value="600">600</option>
-                  <option value="general">General</option>
-                </select>
+                />
               </div>
-
-              {/* <div className="form-group flex flex-col gap-2 text-sm font-semibold">
-                <div className="label font-semibold">File Url</div>
-                <label htmlFor="url">
-                  <div className="w-full font-normal cursor-pointer border border-gray-200 rounded-lg overflow-hidden flex gap-8 items-center ">
-                    <span className="flex w-fit text-white py-3 px-4 cursor-pointer font-semibold bg-gray-600 hover:bg-gray-800 duration-300">
-                      Select a Document
-                    </span>
-                    <span>{rawFile?.name ?? ""}</span>
-                    <input
-                      className="hidden"
-                      style={{
-                        border: "1px solid rgba(125, 125, 125, 0.125)",
-                        boxShadow: "0px 0px 2px rgba(125, 125, 125, 0.125)",
-                      }}
-                      name="url"
-                      type="file"
-                      id="url"
-                      placeholder="File Url"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setRawFile(e.target.files[0]);
-                        function getBase64(file) {
-                          return new Promise((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = () => resolve(reader.result);
-                            reader.onerror = (error) => reject(error);
-                          });
-                        }
-
-                        getBase64(file).then((data) => {
-                          urlRef.current = data;
-                        });
-                      }}
-                    />
-                  </div>
-                </label>
-              </div> */}
 
               <div className="form-group w-full mt-8 flex gap-2 text-sm font-semibold justify-between ">
                 <div className="flex items-center gap-4">
@@ -346,7 +307,7 @@ const EditModule = ({ page }) => {
                   onClick={updateModule}
                   disabled={updateStatus === "pending"}
                 >
-                  Update Module
+                  Update Past Question
                 </button>
               </div>
             </form>
@@ -357,4 +318,4 @@ const EditModule = ({ page }) => {
   );
 };
 
-export default EditModule;
+export default EditPastQuestion;

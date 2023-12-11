@@ -1,36 +1,33 @@
 "use client";
 
-import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
-import SingleModule from "../../components/Modules/SingleModule";
 import { BASE_URL } from "../../constants/variables";
-import { BsCaretLeftFill, BsCaretRightFill, BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
 import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
-import FullScreenLoader from "../../components/Loader/FullLoader";
 import Container from "../../components/Container/Container";
+import SinglePastQuestion from "../../components/PastQuestions/SinglePastQuestion";
 
 export async function getServerSideProps() {
-  const response = await fetch(`${BASE_URL}/modules`);
+  const response = await fetch(`${BASE_URL}/past-questions`);
   const departmentResponse = await fetch(`${BASE_URL}/departments`);
 
-  const allModules = await response?.json();
+  const allPastQuestions = await response?.json();
   const allDepartments = await departmentResponse?.json();
 
   return {
     props: {
-      allModules,
+      allPastQuestions,
       allDepartments,
     },
   };
 }
 
-const Modules = ({ allModules, allDepartments }) => {
-  // const allModules = JSON.parse(modules);
+const PastQuestions = ({ allPastQuestions, allDepartments }) => {
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useReducer(
@@ -38,8 +35,9 @@ const Modules = ({ allModules, allDepartments }) => {
       ...prev,
       ...next,
     }),
-    { department: "", level: "", search: "" }
+    { department: "", level: "", search: "", session: "" }
   );
+  const [allSessions, setAllSessions] = useState([]);
 
   const [activeMenu, setActiveMenu] = useState("");
 
@@ -52,7 +50,7 @@ const Modules = ({ allModules, allDepartments }) => {
   };
 
   const clearFilters = () => {
-    setFilters({ department: "", level: "", search: "" });
+    setFilters({ department: "", level: "", search: "", session: "" });
     setSearch(() => "");
   };
 
@@ -84,26 +82,33 @@ const Modules = ({ allModules, allDepartments }) => {
   }, [pagination]);
 
   const filteredList = useMemo(() => {
-    const list = allModules?.filter(
-      (module) =>
+    const list = allPastQuestions?.filter(
+      (pastQuestion) =>
         (filters?.department === ""
-          ? module?.department?.includes("")
-          : module?.department
+          ? pastQuestion?.departments?.join(",")?.includes("")
+          : pastQuestion?.departments
+              ?.join(",")
               ?.toLowerCase()
               ?.split(",")
               ?.includes(filters?.department)) &&
         (filters?.level === ""
-          ? module?.level?.includes("")
-          : module?.level?.toLowerCase() === filters?.level?.toLowerCase()) &&
-        (module?.courseTitle
+          ? pastQuestion?.level?.includes("")
+          : pastQuestion?.level?.toLowerCase() ===
+            filters?.level?.toLowerCase()) &&
+        (filters?.session === ""
+          ? pastQuestion?.session?.includes("")
+          : pastQuestion?.session === filters?.session) &&
+        (pastQuestion?.courseTitle
           ?.toLowerCase()
           ?.includes(filters?.search?.toLowerCase()) ||
-          module?.courseCode
+          pastQuestion?.courseCode
             ?.toLowerCase()
             ?.includes(filters?.search?.toLowerCase()) ||
-          module?.department
+          pastQuestion?.departments
+            ?.join(",")
             ?.toLowerCase()
-            ?.includes(filters?.search?.toLowerCase()))
+            ?.includes(filters?.search?.toLowerCase()) ||
+          pastQuestion?.session?.includes(filters?.search))
     );
 
     setPagination((prev) => ({
@@ -112,18 +117,23 @@ const Modules = ({ allModules, allDepartments }) => {
       pages: Math.ceil(list?.length / prev?.pageLength),
     }));
     return list;
-  }, [allModules, filters]);
+  }, [allPastQuestions, filters]);
 
   //** END PAGINATION AND LIST FILTER */
+
+  useEffect(() => {
+    let sessions = allPastQuestions?.map((pq) => pq?.session);
+    setAllSessions(Array.from(new Set(sessions)));
+  }, [allPastQuestions]);
 
   return (
     <div className="h-fit flex flex-col">
       <Head>
-        <title>Download Modules</title>
+        <title>Download Past Questions</title>
       </Head>
 
       <Banner
-        title="Modules"
+        title="Past Questions"
         imgUrl="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1673&q=80"
       />
 
@@ -222,21 +232,6 @@ const Modules = ({ allModules, allDepartments }) => {
                         </div>
                       ))}
                       {/* <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "accounting"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Accounting
-                    </div>
-                    <div
                       className={`hover:text-gray-700 duration-300 cursor-pointer ${
                         filters?.department === "business administration"
                           ? "text-gray-700 font-semibold"
@@ -431,6 +426,68 @@ const Modules = ({ allModules, allDepartments }) => {
                     </div>
                   </div>
                 </div>
+
+                {allSessions?.length > 0 && (
+                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
+                    <div
+                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
+                      onClick={() => toggleMenu("session")}
+                    >
+                      Session{" "}
+                      <span className="text-sm text-gray-400 capitalize">
+                        {filters?.session !== "" ? `(${filters?.session})` : ""}
+                      </span>
+                      <span
+                        className={`duration-300 text-2xl ${
+                          activeMenu === "session"
+                            ? "rotate-180 text-gray-700"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <BiChevronDown />
+                      </span>
+                    </div>
+                    <div
+                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
+                        activeMenu === "session" ? "h-fit pt-3" : "h-0 pt-0"
+                      }`}
+                    >
+                      <div
+                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                          filters?.session === ""
+                            ? "text-gray-700 font-semibold"
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          toggleMenu("session");
+                          setFilters({
+                            session: "",
+                          });
+                        }}
+                      >
+                        All Sessions
+                      </div>
+                      {allSessions?.map((sess) => (
+                        <div
+                          key={sess}
+                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                            filters?.session === sess
+                              ? "text-gray-700 font-semibold"
+                              : ""
+                          }`}
+                          onClick={(e) => {
+                            toggleMenu("session");
+                            setFilters({
+                              session: sess,
+                            });
+                          }}
+                        >
+                          {sess}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -691,6 +748,68 @@ const Modules = ({ allModules, allDepartments }) => {
                     </div>
                   </div>
                 </div>
+
+                {allSessions?.length > 0 && (
+                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
+                    <div
+                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
+                      onClick={() => toggleMenu("session")}
+                    >
+                      Session{" "}
+                      <span className="text-sm text-gray-400 capitalize">
+                        {filters?.session !== "" ? `(${filters?.session})` : ""}
+                      </span>
+                      <span
+                        className={`duration-300 text-2xl ${
+                          activeMenu === "session"
+                            ? "rotate-180 text-gray-700"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <BiChevronDown />
+                      </span>
+                    </div>
+                    <div
+                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
+                        activeMenu === "session" ? "h-fit pt-3" : "h-0 pt-0"
+                      }`}
+                    >
+                      <div
+                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                          filters?.session === ""
+                            ? "text-gray-700 font-semibold"
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          toggleMenu("session");
+                          setFilters({
+                            session: "",
+                          });
+                        }}
+                      >
+                        All Sessions
+                      </div>
+                      {allSessions?.map((sess) => (
+                        <div
+                          key={sess}
+                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
+                            filters?.session === sess
+                              ? "text-gray-700 font-semibold"
+                              : ""
+                          }`}
+                          onClick={(e) => {
+                            toggleMenu("session");
+                            setFilters({
+                              session: sess,
+                            });
+                          }}
+                        >
+                          {sess}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -698,12 +817,14 @@ const Modules = ({ allModules, allDepartments }) => {
               <>
                 {(filters?.department !== "" ||
                   filters?.level !== "" ||
-                  filters?.search !== "") && (
+                  filters?.search !== "" ||
+                  filters?.session !== "") && (
                   <div className="mb-2 flex text-sm text-gray-700 text-opacity-80 items-center">
                     Showing results for{" "}
                     {filters?.department &&
                       `${filters?.department} department, `}
                     {filters?.level && `${filters?.level} level, `}
+                    {filters?.session && `${filters?.session}, session`}
                     {filters?.search && `keyword: ${filters?.search}.`}
                     <span>
                       <button
@@ -723,20 +844,25 @@ const Modules = ({ allModules, allDepartments }) => {
                 {filteredList?.length > 0 ? (
                   filteredList
                     ?.slice(pageStart - 1, pageEnd)
-                    ?.map((module) => (
-                      <SingleModule key={module?.id} module={module} />
+                    ?.map((pastQuestion) => (
+                      <SinglePastQuestion
+                        key={pastQuestion?.id}
+                        pastQuestion={pastQuestion}
+                      />
                     ))
                 ) : (
                   <div>No result found</div>
                 )}
               </div>
 
-              <ClientSidePagination
-                pagination={pagination}
-                setPagination={setPagination}
-                pageStart={pageStart}
-                pageEnd={pageEnd}
-              />
+              {filteredList?.length > 0 && (
+                <ClientSidePagination
+                  pagination={pagination}
+                  setPagination={setPagination}
+                  pageStart={pageStart}
+                  pageEnd={pageEnd}
+                />
+              )}
             </div>
           </section>
         </Container>
@@ -745,4 +871,4 @@ const Modules = ({ allModules, allDepartments }) => {
   );
 };
 
-export default Modules;
+export default PastQuestions;

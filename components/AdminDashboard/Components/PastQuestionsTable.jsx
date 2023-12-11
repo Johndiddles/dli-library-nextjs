@@ -9,19 +9,20 @@ import { BsSearch } from "react-icons/bs";
 import Spinner from "../../Loader/Spinner";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
+import moment from "moment/moment";
 
-const ModulesTable = () => {
+const PastQuestionsTable = () => {
   const [fetchStatus, setFetchStatus] = useState("idle");
-  const [modules, setModules] = useState([]);
+  const [pastQuestions, setPastQuestions] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const fetchModules = async () => {
+    const fetchPastQuestions = async () => {
       setFetchStatus("pending");
       try {
-        const response = await axiosInstance.get("modules");
+        const response = await axiosInstance.get("past-questions");
         // console.log({ response });
-        setModules(response?.data);
+        setPastQuestions(response?.data);
         setFetchStatus("success");
       } catch (error) {
         console.log({ error });
@@ -29,7 +30,7 @@ const ModulesTable = () => {
       }
     };
 
-    if (fetchStatus === "idle") fetchModules();
+    if (fetchStatus === "idle") fetchPastQuestions();
   }, [fetchStatus]);
 
   const tableData = useMemo(() => {
@@ -46,29 +47,45 @@ const ModulesTable = () => {
         </tr>
       );
     }
-    if (fetchStatus === "success" && modules.length > 0) {
-      return modules
+    if (fetchStatus === "success" && pastQuestions.length > 0) {
+      return pastQuestions
+        ?.sort((a, b) => {
+          if (a?.courseCode?.toLowerCase() < b.courseCode?.toLowerCase()) {
+            return -1;
+          }
+          if (a?.courseCode?.toLowerCase() > b.courseCode?.toLowerCase()) {
+            return 1;
+          }
+        })
         ?.filter(
-          (module) =>
-            module.courseCode?.toLowerCase()?.includes(search?.toLowerCase()) ||
-            module?.courseTitle
+          (pastQuestion) =>
+            pastQuestion?.courseCode
               ?.toLowerCase()
               ?.includes(search?.toLowerCase()) ||
-            module?.department?.toLowerCase()?.includes(search?.toLowerCase())
+            pastQuestion?.courseTitle
+              ?.toLowerCase()
+              ?.includes(search?.toLowerCase()) ||
+            pastQuestion?.department
+              ?.toLowerCase()
+              ?.includes(search?.toLowerCase())
         )
-        .map((module, index) => (
+        .map((pastQuestion, index) => (
           <tr
-            key={module?.id}
-            className={`${styles.table__row} ${styles.modules__table__row}`}
+            key={pastQuestion?.id}
+            className={`${styles.table__row} ${styles.pastQuestions__table__row}`}
           >
             <td>{index + 1}</td>
-            <td>{module?.courseCode}</td>
-            <td>{module?.courseTitle}</td>
-            <td>{module?.department?.split(",")?.join(", ")}</td>
-            <td>{module?.level}</td>
+            <td>{pastQuestion?.courseCode}</td>
+            <td>{pastQuestion?.courseTitle}</td>
+            <td>{pastQuestion?.departments?.join(", ")}</td>
+            <td>{pastQuestion?.level}</td>
+            <td>{pastQuestion?.session}</td>
+            <td>
+              {moment(pastQuestion?.updatedAt).format("Do-MMM-YYYY | hh:mmA")}
+            </td>
             <td>
               <Link
-                href={`/admin/dashboard/edit-module?moduleId=${module.id}`}
+                href={`/admin/dashboard/edit-past-question?pastQuestionId=${pastQuestion?.id}`}
                 className="my-2 py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold"
               >
                 Edit
@@ -77,13 +94,13 @@ const ModulesTable = () => {
           </tr>
         ));
     }
-  }, [fetchStatus, modules, search]);
+  }, [fetchStatus, pastQuestions, search]);
 
   return (
     <div className={`w-full`}>
       <div className="bg-white px-4 py-4 rounded-t-2xl flex justify-between items-center">
         <h4 className="font-bold text-lg font-montserrat text-slate-800">
-          All Modules
+          All Past Questions
         </h4>
 
         <div className="flex gap-4 items-center ">
@@ -91,7 +108,7 @@ const ModulesTable = () => {
             <BsSearch />
             <input
               type="text"
-              placeholder="search modules..."
+              placeholder="search past questions..."
               className=" outline-none "
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -99,17 +116,19 @@ const ModulesTable = () => {
           </div>
 
           <Link
-            href="/admin/dashboard/add-module"
+            href="/admin/dashboard/add-past-question"
             className="flex items-center gap-2 bg-gray-700 text-gray-300 hover:bg-gray-900 hover:text-gray-100 duration-300 font-semibold text-sm py-2 px-4 rounded"
           >
             <FaPlus />
-            Add Module
+            Add Past Questions
           </Link>
         </div>
       </div>
       <table className={`${styles.table}`}>
         <thead className={`${styles.table__head}`}>
-          <tr className={`${styles.table__row} ${styles.modules__table__row}`}>
+          <tr
+            className={`${styles.table__row} ${styles.pastQuestions__table__row}`}
+          >
             <th className={`font-extrabold text-base text-slate-700`}>#</th>
             <th className={`font-extrabold text-base text-slate-700`}>
               Course Code
@@ -122,6 +141,12 @@ const ModulesTable = () => {
             </th>
             <th className={`font-extrabold text-base text-slate-700`}>Level</th>
             <th className={`font-extrabold text-base text-slate-700`}>
+              Session
+            </th>
+            <th className={`font-extrabold text-base text-slate-700`}>
+              Last Updated
+            </th>
+            <th className={`font-extrabold text-base text-slate-700`}>
               Action
             </th>
           </tr>
@@ -132,4 +157,4 @@ const ModulesTable = () => {
   );
 };
 
-export default ModulesTable;
+export default PastQuestionsTable;

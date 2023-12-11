@@ -6,7 +6,7 @@ import NavProfile from "./NavProfile";
 
 const MobileNavigation = ({ toggleNavbar, openNav }) => {
   return (
-    <div className="block sm:hidden">
+    <div className="block lg:hidden">
       <div
         className={`fixed top-0 left-0 w-full bg-slate-800 bg-opacity-100 backdrop-blur overflow-hidden duration-300 px-4 flex flex-col justify-center items-center ${
           openNav ? "min-h-[100vh] h-fit py-5" : "h-0 py-0"
