@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 
 import { Montserrat, Raleway } from "@next/font/google";
 import MainLayout from "../components/MainLayout/layout";
+import Script from "next/script";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -30,6 +31,19 @@ export default function App({ Component, pageProps }) {
 
       <Analytics />
       <ToastContainer />
+
+      <Script
+        strategy="afterInteractive"
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-N50T72ENSH"
+      ></Script>
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-N50T72ENSH');`}
+      </Script>
     </MainLayout>
   );
 }
