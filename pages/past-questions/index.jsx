@@ -11,6 +11,7 @@ import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 import Container from "../../components/Container/Container";
 import SinglePastQuestion from "../../components/PastQuestions/SinglePastQuestion";
+import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
 export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/past-questions`);
@@ -157,6 +158,7 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
               <span className="hidden sm:block">Search</span> <BsSearch />{" "}
             </button>
           </form>
+          <InFeedsAd />
         </section>
         <Container>
           <section className="w-full flex flex-col lg:flex-row gap-4 md:gap-8 lg:gap-12 ">

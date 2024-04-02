@@ -24,6 +24,7 @@ import { useAuthContext } from "../../context/authContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import Link from "next/link";
+import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -171,7 +172,9 @@ const SingleModulePage = () => {
                 "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1673&q=80"
               }
             />
+
             <Container>
+              <InFeedsAd />
               <section className="px-4 py-8">
                 <div className="flex flex-col lg:flex-row gap-4 lg:gap-10">
                   <div className="py-1 lg:py-4 flex flex-col items-center lg:items-start gap-4 w-full lg:w-[200px] lg:min-w-[200px]">

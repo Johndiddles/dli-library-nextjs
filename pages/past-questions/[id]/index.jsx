@@ -27,6 +27,7 @@ import { useAuthContext } from "../../context/authContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import { MdLibraryBooks } from "react-icons/md";
+import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -103,39 +104,6 @@ const SinglePastQuestionPage = () => {
     }
   };
 
-  // const addBookToFavorites = useCallback(() => {
-  //   const action = async () => {
-  //     const response = await addFavorites(id, session.user.token);
-
-  //     if (response?.message === "success") {
-  //       verifyUser();
-  //     } else if (response?.message === "unauthorized") {
-  //       router.push(
-  //         `${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules/${id}`
-  //       );
-  //     } else {
-  //     }
-  //   };
-
-  //   return action();
-  // }, [verifyUser, id, router, session?.user?.token]);
-
-  // const isBookFavorites = useMemo(
-  //   () => favorite_modules?.includes(id),
-  //   [favorite_modules, id]
-  // );
-
-  // const addToFavorites = (e) => {
-  //   e.preventDefault();
-  //   if (session) {
-  //     addBookToFavorites();
-  //   } else {
-  //     router.push(
-  //       `${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules/${id}`
-  //     );
-  //   }
-  // };
-
   return (
     <div>
       <Head>
@@ -161,6 +129,7 @@ const SinglePastQuestionPage = () => {
               }
             />
             <Container>
+              <InFeedsAd />
               <section className="px-4 py-8">
                 <div className="flex gap-4 sm:gap-8 lg:gap-10">
                   <div className="py-8 flex flex-col items-center lg:items-start gap-6 sm:gap-4 w-fit lg:w-[200px] lg:min-w-[200px]">
@@ -202,27 +171,6 @@ const SinglePastQuestionPage = () => {
                         </span>
                       </button>
                     </div>
-                    {/* <div className="flex items-center gap-4">
-                      <button
-                        className={`outline-none cursor-pointer text-left duration-300 text-gray-400 ${
-                          isBookFavorites
-                            ? "hover:text-red-700"
-                            : "hover:text-green-600"
-                        } flex items-center gap-4`}
-                        onClick={addToFavorites}
-                      >
-                        <FaHeart />{" "}
-                        <span
-                          className={`hidden lg:block text-gray-500 ${
-                            isBookFavorites
-                              ? "hover:text-red-700"
-                              : "hover:text-green-600"
-                          }`}
-                        >
-                          {isBookFavorites ? "Remove from" : "Add to"} favorites
-                        </span>
-                      </button>
-                    </div> */}
 
                     <div className="w-full">
                       <button

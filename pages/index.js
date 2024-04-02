@@ -4,8 +4,8 @@ import Head from "next/head";
 import Hero from "../components/HomePage/Hero";
 import CommonBooks from "../components/HomePage/CommonBooks";
 import HowItWorks from "../components/HomePage/HowItWorks";
-import axios from "axios";
 import { BASE_URL } from "../constants/variables";
+import InFeedsAd from "../components/GoogleAds/InFeedsAd";
 
 const Home = ({ modules }) => {
   return (
@@ -24,6 +24,7 @@ const Home = ({ modules }) => {
       <main className="flex flex-col min-h-screen w-screen">
         <Hero />
         <HowItWorks />
+        <InFeedsAd />
         <CommonBooks books={modules} />
       </main>
     </>
