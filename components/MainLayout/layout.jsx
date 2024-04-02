@@ -7,9 +7,9 @@ import LoginModalContextProvider, {
   useLoginModalContext,
 } from "../../pages/context/loginModalContext";
 import { SessionProvider } from "next-auth/react";
+import InFeedsAd from "../GoogleAds/InFeedsAd";
 
 const MainLayout = ({ children }) => {
-  // const { isModalOpen } = useLoginModalContext();
   return (
     <div className="flex flex-col justify-between min-h-screen">
       <SessionProvider>
@@ -18,6 +18,7 @@ const MainLayout = ({ children }) => {
             <Suspense fallback={<LoadingScreen />}>
               <Header />
               {children}
+              <InFeedsAd />
               <Footer />
             </Suspense>
           </LoginModalContextProvider>

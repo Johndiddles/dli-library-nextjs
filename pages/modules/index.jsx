@@ -13,6 +13,7 @@ import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 import FullScreenLoader from "../../components/Loader/FullLoader";
 import Container from "../../components/Container/Container";
+import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
 export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/modules`);
@@ -147,6 +148,7 @@ const Modules = ({ allModules, allDepartments }) => {
               <span className="hidden sm:block">Search</span> <BsSearch />{" "}
             </button>
           </form>
+          <InFeedsAd />
         </section>
         <Container>
           <section className="w-full flex flex-col lg:flex-row gap-4 md:gap-8 lg:gap-12 ">
@@ -221,81 +223,6 @@ const Modules = ({ allModules, allDepartments }) => {
                           {dept?.title}
                         </div>
                       ))}
-                      {/* <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "accounting"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Accounting
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "business administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Business Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "economics"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Economics
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "public administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Public Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      General
-                    </div> */}
                     </div>
                   </div>
                 )}
@@ -496,76 +423,6 @@ const Modules = ({ allModules, allDepartments }) => {
                           {dept?.title}
                         </div>
                       ))}
-                      {/* <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "accounting"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Accounting
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "business administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Business Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "economics"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Economics
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "public administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Public Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      General
-                    </div> */}
                     </div>
                   </div>
                 )}
