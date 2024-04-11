@@ -77,7 +77,7 @@ const NavProfile = ({ mobile, toggleNavbar }) => {
               : "text-gray-100 bg-green-600 hover:bg-green-700 rounded-3xl px-4 py-1"
           }`}
           style={{
-            fontFamily: mobile ? "var(--font-cinzel)" : "",
+            fontFamily: mobile ? "var(--font-cinzel)" : null,
           }}
         >
           <AiOutlineUser /> Login

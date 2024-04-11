@@ -1,5 +1,3 @@
-"use client";
-
 import "../styles/globals.css";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { Montserrat, Raleway } from "@next/font/google";
 import MainLayout from "../components/MainLayout/layout";
 import Script from "next/script";
+import Insights from "../components/Insights/SpeedInsights";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -30,6 +29,7 @@ export default function App({ Component, pageProps }) {
       </main>
 
       <Analytics />
+      <Insights />
       <ToastContainer />
 
       <Script

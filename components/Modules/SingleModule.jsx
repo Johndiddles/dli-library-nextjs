@@ -87,7 +87,7 @@ const SingleModule = ({ module }) => {
           className={`overflow-hidden rounded-t-lg ${styles.singleModule__image}`}
         >
           <Image
-            src={module?.thumbnail}
+            src={module?.thumbnail?.split("http").join("https")}
             alt="module"
             style={{
               objectFit: "cover",
@@ -117,6 +117,7 @@ const SingleModule = ({ module }) => {
                 <Tooltip
                   button={
                     <button
+                      aria-label="copy link"
                       className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
                       onClick={() => {
                         copyLink(module?.id, module?.courseTitle, "modules");
@@ -134,6 +135,7 @@ const SingleModule = ({ module }) => {
                     <Tooltip
                       button={
                         <button
+                          aria-label="like module"
                           className={`outline-none cursor-pointer duration-300 ${
                             isModuleFavorite
                               ? "text-green-600 hover:text-red-700"

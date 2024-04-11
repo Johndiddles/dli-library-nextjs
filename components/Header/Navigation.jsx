@@ -74,8 +74,8 @@ const NavbarLink = ({ name, href, mobile, toggleNavbar }) => (
         : "border-b-2 border-b-transparent py-1 hover:scale-110 font-montserrat text-sm text-center"
     }`}
     style={{
-      textShadow: mobile ? "" : "0 2px 4px rgba(0,0,0,1)",
-      fontFamily: mobile ? "var(--font-cinzel)" : "",
+      textShadow: !!mobile ? null : "0 2px 4px rgba(0,0,0,1)",
+      fontFamily: !!mobile ? "var(--font-cinzel)" : null,
     }}
     href={href}
     onClick={mobile && toggleNavbar}

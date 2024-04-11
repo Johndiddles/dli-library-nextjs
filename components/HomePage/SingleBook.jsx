@@ -13,7 +13,11 @@ const SingleBook = ({ book }) => {
     >
       <div className="w-full h-[360px] flex justify-center items-center overflow-hidden">
         <div className="w-full h-full relative">
-          <Image fill src={book?.thumbnail} alt={book?.courseTitle} />
+          <Image
+            fill
+            src={book?.thumbnail?.split("http").join("https")}
+            alt={book?.courseTitle}
+          />
         </div>
       </div>
       <div

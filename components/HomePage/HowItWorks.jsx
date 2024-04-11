@@ -46,7 +46,7 @@ const Cards = ({ title, desc, icon }) => {
 
         <div className="w-[25px] h-[4px] rounded-full bg-green-600"></div>
       </div>
-      <div className="text-sm px-4 sm:px-10 py-3 text-slate-400">{desc}</div>
+      <div className="text-sm px-4 sm:px-10 py-3 text-slate-800">{desc}</div>
     </div>
   );
 };

@@ -155,8 +155,28 @@ const SingleModulePage = () => {
       <Head>
         <title>
           Preview
-          {moduleDetails?.courseTitle && ` - ${moduleDetails?.courseTitle}`}
+          {moduleDetails?.courseTitle
+            ? ` - ${moduleDetails?.courseTitle}`
+            : " Module"}
         </title>
+        <meta property="og:title" content="Dli Library" key="title" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+        <meta
+          property="og:image"
+          content={
+            moduleDetails?.thumbnail?.split("http").join("https") ??
+            `${CLIENT_ORIGIN}/opengraph-image.png`
+          }
+        />
+        <meta property="og:image:alt" content={moduleDetails?.courseTitle} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="icon"
+          href="/favicon/dli-library-website-favicon-white.png"
+          sizes="16x16 32x32 64x64"
+          type="image/png"
+        />
       </Head>
 
       <main>
@@ -181,6 +201,7 @@ const SingleModulePage = () => {
                     <div className="flex lg:flex-col justify-center flex-wrap items-center lg:items-start gap-4 sm:gap-8 lg:gap-4 w-full lg:w-[200px] lg:min-w-[200px]">
                       <div className="flex items-center gap-4">
                         <button
+                          aria-label="copy link"
                           className="outline-none cursor-pointer text-left text-sm md:text-base duration-300 text-gray-400 hover:text-green-600 flex items-center gap-1 md:gap-4"
                           onClick={() => {
                             copyLink(id, moduleDetails?.courseTitle, "modules");
@@ -192,6 +213,7 @@ const SingleModulePage = () => {
                       </div>
                       <div className="flex items-center gap-4">
                         <button
+                          aria-label="like module"
                           className={`outline-none cursor-pointer text-left text-sm md:text-base duration-300 text-gray-400 ${
                             isBookFavorites
                               ? "hover:text-red-700"

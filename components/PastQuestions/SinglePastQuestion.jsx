@@ -90,7 +90,7 @@ const SinglePastQuestion = ({ pastQuestion }) => {
           className={`overflow-hidden rounded-t-lg ${styles.singleModule__image}`}
         >
           <Image
-            src={pastQuestion?.thumbnail}
+            src={pastQuestion?.thumbnail?.split("http").join("https")}
             alt={`${pastQuestion?.courseCode} past question`}
             style={{
               objectFit: "cover",
@@ -133,6 +133,7 @@ const SinglePastQuestion = ({ pastQuestion }) => {
                 <Tooltip
                   button={
                     <button
+                      aria-label="copy link"
                       className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
                       onClick={() => {
                         copyLink(

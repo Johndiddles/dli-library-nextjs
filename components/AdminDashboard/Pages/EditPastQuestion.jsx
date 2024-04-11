@@ -168,7 +168,9 @@ const EditPastQuestion = ({ page }) => {
         setCourseTitle(fetchedPastQuestion.courseTitle);
         setDepartments(fetchedPastQuestion.departments);
         setLevel(fetchedPastQuestion.level);
-        setThumbnail(fetchedPastQuestion.thumbnail);
+        setThumbnail(
+          fetchedPastQuestion.thumbnail?.split("http").join("https")
+        );
         setLikes(fetchedPastQuestion?.likes);
         setSession(fetchedPastQuestion?.session);
         setCourseId(fetchedPastQuestion?.courseId);

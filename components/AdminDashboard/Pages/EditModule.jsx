@@ -146,7 +146,7 @@ const EditModule = ({ page }) => {
         setCourseTitle(fetchedModule.courseTitle);
         setDepartment(fetchedModule.department?.split(","));
         setLevel(fetchedModule.level);
-        setImageUrl(fetchedModule.thumbnail);
+        setImageUrl(fetchedModule.thumbnail?.split("http").join("https"));
 
         setFetchModuleStatus("success");
       } catch (error) {

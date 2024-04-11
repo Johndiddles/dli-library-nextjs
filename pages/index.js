@@ -1,11 +1,18 @@
-"use client";
-
 import Head from "next/head";
 import Hero from "../components/HomePage/Hero";
-import CommonBooks from "../components/HomePage/CommonBooks";
+import dynamic from "next/dynamic";
+
+// import CommonBooks from "../components/HomePage/CommonBooks";
 import HowItWorks from "../components/HomePage/HowItWorks";
-import { BASE_URL } from "../constants/variables";
+import { BASE_URL, CLIENT_ORIGIN } from "../constants/variables";
 import InFeedsAd from "../components/GoogleAds/InFeedsAd";
+
+const CommonBooks = dynamic(
+  () => import("../components/HomePage/CommonBooks"),
+  {
+    loading: () => <p>...</p>,
+  }
+);
 
 const Home = ({ modules }) => {
   return (
@@ -13,7 +20,15 @@ const Home = ({ modules }) => {
       <Head>
         <title>DLI Library</title>
         <meta name="description" content="Find all UNILAG dli modules" />
+        <meta property="og:title" content="Dli Library" key="title" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+        <meta
+          property="og:image"
+          content={`${CLIENT_ORIGIN}/opengraph-image.png`}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:image:alt" content="Dli library image" />
         <link
           rel="icon"
           href="/favicon/dli-library-website-favicon-white.png"

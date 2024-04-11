@@ -1,17 +1,15 @@
 "use client";
 
-import axios from "axios";
 import Head from "next/head";
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import React, { useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
 import SingleModule from "../../components/Modules/SingleModule";
-import { BASE_URL } from "../../constants/variables";
-import { BsCaretLeftFill, BsCaretRightFill, BsSearch } from "react-icons/bs";
+import { BASE_URL, CLIENT_ORIGIN } from "../../constants/variables";
+import { BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
 import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
-import FullScreenLoader from "../../components/Loader/FullLoader";
 import Container from "../../components/Container/Container";
 import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
@@ -121,6 +119,21 @@ const Modules = ({ allModules, allDepartments }) => {
     <div className="h-fit flex flex-col">
       <Head>
         <title>Download Modules</title>
+        <meta property="og:title" content="Dli Library" key="title" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+        <meta
+          property="og:image"
+          content={`${CLIENT_ORIGIN}/opengraph-image.png`}
+        />
+        <meta property="og:image:alt" content="Dli library modules" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="icon"
+          href="/favicon/dli-library-website-favicon-white.png"
+          sizes="16x16 32x32 64x64"
+          type="image/png"
+        />
       </Head>
 
       <Banner
@@ -139,6 +152,7 @@ const Modules = ({ allModules, allDepartments }) => {
               onChange={(e) => setSearch(() => e.target.value)}
             />
             <button
+              aria-label="search"
               className="h-full bg-green-600 text-white rounded-r-lg py-3 px-4 sm:px-8 hover:bg-green-800 duration-300 flex gap-4 items-center"
               onClick={(e) => {
                 e.preventDefault();

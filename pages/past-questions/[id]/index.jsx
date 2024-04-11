@@ -4,26 +4,15 @@ import axios from "axios";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, {
-  // useCallback,
-  // useContext,
-  useEffect,
-  // useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { BsCloudDownload } from "react-icons/bs";
-import {
-  // FaHeart,
-  FaLink,
-} from "react-icons/fa";
+import { FaLink } from "react-icons/fa";
 import Banner from "../../../components/Banner/Banner";
 import ButtonSpinner from "../../../components/Loader/ButtonSpinner";
 import FullScreenLoader from "../../../components/Loader/FullLoader";
 import { BASE_URL, CLIENT_ORIGIN } from "../../../constants/variables";
-// import addFavorites from "../../../globalFunctions/addBookToFavorites";
 import copyLink from "../../../globalFunctions/copyModuleLink";
 import { useAuthContext } from "../../context/authContext";
-// import { useLoginModalContext } from "../../context/loginModalContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import { MdLibraryBooks } from "react-icons/md";
@@ -40,9 +29,6 @@ const SinglePastQuestionPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const { id } = router?.query;
-
-  // const { verifyUser, favorite_modules } = useAuthContext();
-  // const { setIsModalOpen } = useLoginModalContext();
 
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [pastQuestionDetails, setPastQuestionDetails] = useState({});
@@ -109,9 +95,31 @@ const SinglePastQuestionPage = () => {
       <Head>
         <title>
           Preview
-          {pastQuestionDetails?.courseTitle &&
-            ` - ${pastQuestionDetails?.courseTitle}`}
+          {pastQuestionDetails?.courseTitle
+            ? ` - ${pastQuestionDetails?.courseTitle}`
+            : " Past Question"}
         </title>
+        <meta property="og:title" content="Dli Library" key="title" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+        <meta
+          property="og:image"
+          content={
+            pastQuestionDetails?.thumbnail?.split("http").join("https") ??
+            `${CLIENT_ORIGIN}/opengraph-image.png`
+          }
+        />
+        <meta
+          property="og:image:alt"
+          content={pastQuestionDetails?.courseTitle}
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="icon"
+          href="/favicon/dli-library-website-favicon-white.png"
+          sizes="16x16 32x32 64x64"
+          type="image/png"
+        />
       </Head>
 
       <main>
@@ -153,6 +161,7 @@ const SinglePastQuestionPage = () => {
                     </div>
                     <div className="flex items-center gap-4">
                       <button
+                        aria-label="copy link"
                         className="outline-none cursor-pointer text-left duration-300 text-gray-400 hover:text-green-600 flex items-center gap-4"
                         onClick={() => {
                           copyLink(

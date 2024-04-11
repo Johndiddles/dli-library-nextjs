@@ -3,7 +3,7 @@
 import Head from "next/head";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
-import { BASE_URL } from "../../constants/variables";
+import { BASE_URL, CLIENT_ORIGIN } from "../../constants/variables";
 import { BsSearch } from "react-icons/bs";
 import { BiChevronDown } from "react-icons/bi";
 import { ImEqualizer } from "react-icons/im";
@@ -131,6 +131,21 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
     <div className="h-fit flex flex-col">
       <Head>
         <title>Download Past Questions</title>
+        <meta property="og:title" content="Dli Library" key="title" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+        <meta
+          property="og:image"
+          content={`${CLIENT_ORIGIN}/opengraph-image.png`}
+        />
+        <meta property="og:image:alt" content="Dli library past questions" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="icon"
+          href="/favicon/dli-library-website-favicon-white.png"
+          sizes="16x16 32x32 64x64"
+          type="image/png"
+        />
       </Head>
 
       <Banner

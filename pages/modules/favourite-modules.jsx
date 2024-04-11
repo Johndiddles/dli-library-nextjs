@@ -179,6 +179,7 @@ const FavouriteModulesPageContent = () => {
                 onChange={(e) => setSearch(() => e.target.value)}
               />
               <button
+                aria-label="search"
                 className="h-full bg-green-600 text-white rounded-r-lg py-3 px-4 sm:px-8 hover:bg-green-800 duration-300 flex gap-4 items-center"
                 onClick={(e) => {
                   e.preventDefault();

@@ -6,29 +6,34 @@ import BrandAndLogo from "./BrandAndLogo";
 import MobileNavigation from "./MobileNavigation";
 import Navigation from "./Navigation";
 import NavProfile from "./NavProfile";
+import Container from "../Container/Container";
 
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const mobileNavRef = useRef(null);
   const toggleNavbar = () => setOpenNav((prev) => !prev);
   return (
-    <div className="bg-transparent absolute top-0 left-0 w-screen py-2 px-8 shadow-sm z-20 text-gray-300 flex justify-between items-center gap-12">
-      <div>
-        <BrandAndLogo />
-      </div>
+    <div className="bg-transparent absolute top-0 left-0 w-screen py-2 px-8 shadow-sm z-20 ">
+      <Container>
+        <div className="text-gray-300 flex justify-between items-center gap-12">
+          <div>
+            <BrandAndLogo />
+          </div>
 
-      <div className="flex-grow hidden lg:flex justify-end items-center gap-10">
-        <Navigation />
-        <NavProfile />
-      </div>
+          <div className="flex-grow hidden lg:flex justify-end items-center gap-10">
+            <Navigation />
+            <NavProfile />
+          </div>
 
-      <MobileNavigation toggleNavbar={toggleNavbar} openNav={openNav} />
+          <MobileNavigation toggleNavbar={toggleNavbar} openNav={openNav} />
 
-      <div className="lg:hidden">
-        <button onClick={toggleNavbar}>
-          <FaBars />
-        </button>
-      </div>
+          <div className="lg:hidden">
+            <button onClick={toggleNavbar} aria-label="Open Navigation Menu">
+              <FaBars />
+            </button>
+          </div>
+        </div>
+      </Container>
     </div>
   );
 };

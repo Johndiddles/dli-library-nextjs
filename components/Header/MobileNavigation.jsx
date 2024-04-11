@@ -16,6 +16,7 @@ const MobileNavigation = ({ toggleNavbar, openNav }) => {
           <div className="fixed top-0 left-0 py-2 px-8 bg-slate-900 bg-opacity-50 flex justify-between w-full shadow-lg">
             <Logo />
             <button
+              aria-label="Close Navigation Menu"
               onClick={toggleNavbar}
               className=" top-6 right-8 text-xl text-gray-100 hover:text-gray-200 duration-300 hover:scale-110"
             >
