@@ -18,7 +18,7 @@ const Login = ({ providers }) => {
     }
   }, [router, session]);
 
-  console.log({ providers });
+  // console.log({ providers });
 
   return (
     <div className="min-h-[100%] flex-grow flex flex-col">
@@ -61,6 +61,8 @@ export async function getServerSideProps(context) {
   }
 
   const providers = await getProviders();
+
+  console.log({ providers });
 
   return {
     props: { providers: providers ?? [] },

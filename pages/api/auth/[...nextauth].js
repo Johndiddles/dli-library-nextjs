@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+// import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+// import CredentialsProvider from "next-auth/providers/credentials";
 import { BASE_URL } from "../../../constants/variables";
 
 export const options = {

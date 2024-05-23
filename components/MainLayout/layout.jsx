@@ -7,7 +7,7 @@ import LoginModalContextProvider, {
   useLoginModalContext,
 } from "../../pages/context/loginModalContext";
 import { SessionProvider } from "next-auth/react";
-import InFeedsAd from "../GoogleAds/InFeedsAd";
+// import InFeedsAd from "../GoogleAds/InFeedsAd";
 
 const MainLayout = ({ children }) => {
   return (
@@ -18,7 +18,7 @@ const MainLayout = ({ children }) => {
             <Suspense fallback={<LoadingScreen />}>
               <Header />
               {children}
-              <InFeedsAd />
+              {/* <InfeedsAd /> */}
               <Footer />
             </Suspense>
           </LoginModalContextProvider>

@@ -16,7 +16,7 @@ import { useAuthContext } from "../../context/authContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import { MdLibraryBooks } from "react-icons/md";
-import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
+// import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -137,7 +137,7 @@ const SinglePastQuestionPage = () => {
               }
             />
             <Container>
-              <InFeedsAd />
+              {/* <InfeedsAd /> */}
               <section className="px-4 py-8">
                 <div className="flex gap-4 sm:gap-8 lg:gap-10">
                   <div className="py-8 flex flex-col items-center lg:items-start gap-6 sm:gap-4 w-fit lg:w-[200px] lg:min-w-[200px]">

@@ -24,7 +24,7 @@ import { useAuthContext } from "../../context/authContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import Link from "next/link";
-import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
+// import InFeedsAd from "../../../components/GoogleAds/InFeedsAd";
 
 const DocumentViewer = dynamic(
   () => import("../../../components/PDFViewer/DocumentViewer"),
@@ -194,7 +194,7 @@ const SingleModulePage = () => {
             />
 
             <Container>
-              <InFeedsAd />
+              {/* <InfeedsAd /> */}
               <section className="px-4 py-8">
                 <div className="flex flex-col lg:flex-row gap-4 lg:gap-10">
                   <div className="py-1 lg:py-4 flex flex-col items-center lg:items-start gap-4 w-full lg:w-[200px] lg:min-w-[200px]">

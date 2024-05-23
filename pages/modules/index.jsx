@@ -11,7 +11,7 @@ import { ImEqualizer } from "react-icons/im";
 import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 import Container from "../../components/Container/Container";
-import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
+// import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
 export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/modules`);
@@ -162,7 +162,7 @@ const Modules = ({ allModules, allDepartments }) => {
               <span className="hidden sm:block">Search</span> <BsSearch />{" "}
             </button>
           </form>
-          <InFeedsAd />
+          {/* <InfeedsAd /> */}
         </section>
         <Container>
           <section className="w-full flex flex-col lg:flex-row gap-4 md:gap-8 lg:gap-12 ">

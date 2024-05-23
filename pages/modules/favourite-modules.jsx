@@ -17,7 +17,7 @@ import FullScreenLoader from "../../components/Loader/FullLoader";
 import Container from "../../components/Container/Container";
 import { useAuthContext } from "../context/authContext";
 import { useRouter } from "next/router";
-import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
+// import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
 const FavouriteModules = () => {
   const location = usePathname();
@@ -189,7 +189,7 @@ const FavouriteModulesPageContent = () => {
                 <span className="hidden sm:block">Search</span> <BsSearch />{" "}
               </button>
             </form>
-            <InFeedsAd />
+            {/* <InfeedsAd /> */}
           </section>
           <Container>
             <section className="w-full flex flex-col lg:flex-row gap-4 md:gap-8 lg:gap-12 ">

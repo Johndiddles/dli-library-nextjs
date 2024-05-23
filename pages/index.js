@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 // import CommonBooks from "../components/HomePage/CommonBooks";
 import HowItWorks from "../components/HomePage/HowItWorks";
 import { BASE_URL, CLIENT_ORIGIN } from "../constants/variables";
-import InFeedsAd from "../components/GoogleAds/InFeedsAd";
+// import InFeedsAd from "../components/GoogleAds/InFeedsAd";
 
 const CommonBooks = dynamic(
   () => import("../components/HomePage/CommonBooks"),
@@ -39,7 +39,7 @@ const Home = ({ modules }) => {
       <main className="flex flex-col min-h-screen w-screen">
         <Hero />
         <HowItWorks />
-        <InFeedsAd />
+        {/* <InfeedsAd /> */}
         <CommonBooks books={modules} />
       </main>
     </>
