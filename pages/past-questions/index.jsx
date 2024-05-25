@@ -4,14 +4,15 @@ import Head from "next/head";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import Banner from "../../components/Banner/Banner";
 import { BASE_URL, CLIENT_ORIGIN } from "../../constants/variables";
-import { BsSearch } from "react-icons/bs";
-import { BiChevronDown } from "react-icons/bi";
-import { ImEqualizer } from "react-icons/im";
 import { MdClear } from "react-icons/md";
 import ClientSidePagination from "../../components/Pagination/ClientSidePagination";
 import Container from "../../components/Container/Container";
 import SinglePastQuestion from "../../components/PastQuestions/SinglePastQuestion";
-import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
+import SearchBox from "../../components/Filters/SearchBox";
+import { useRouter } from "next/router";
+import MobileFilters from "../../components/Filters/MobileFilters";
+import DesktopFilters from "../../components/Filters/DesktopFilters";
+// import InFeedsAd from "../../components/GoogleAds/InFeedsAd";
 
 export async function getServerSideProps() {
   const response = await fetch(`${BASE_URL}/past-questions`);
@@ -29,8 +30,9 @@ export async function getServerSideProps() {
 }
 
 const PastQuestions = ({ allPastQuestions, allDepartments }) => {
+  const router = useRouter();
   const [search, setSearch] = useState("");
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [allSessions, setAllSessions] = useState([]);
   const [filters, setFilters] = useReducer(
     (prev, next) => ({
       ...prev,
@@ -38,21 +40,17 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
     }),
     { department: "", level: "", search: "", session: "" }
   );
-  const [allSessions, setAllSessions] = useState([]);
-
-  const [activeMenu, setActiveMenu] = useState("");
-
-  const toggleMenu = (menu) => {
-    if (activeMenu === menu) {
-      setActiveMenu(() => "");
-    } else {
-      setActiveMenu(() => menu);
-    }
-  };
+  const [queryParameters, setQueryParameters] = useReducer(
+    (prev, next) => ({
+      ...prev,
+      ...next,
+    }),
+    { department: "", level: "", search: "", session: "" }
+  );
 
   const clearFilters = () => {
-    setFilters({ department: "", level: "", search: "", session: "" });
     setSearch(() => "");
+    router.push("/past-questions");
   };
 
   //** PAGINATION AND LIST FILTER **//
@@ -85,31 +83,31 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
   const filteredList = useMemo(() => {
     const list = allPastQuestions?.filter(
       (pastQuestion) =>
-        (filters?.department === ""
+        (queryParameters?.department === ""
           ? pastQuestion?.departments?.join(",")?.includes("")
           : pastQuestion?.departments
               ?.join(",")
               ?.toLowerCase()
               ?.split(",")
-              ?.includes(filters?.department)) &&
-        (filters?.level === ""
+              ?.includes(queryParameters?.department)) &&
+        (queryParameters?.level === ""
           ? pastQuestion?.level?.includes("")
           : pastQuestion?.level?.toLowerCase() ===
-            filters?.level?.toLowerCase()) &&
-        (filters?.session === ""
+            queryParameters?.level?.toLowerCase()) &&
+        (queryParameters?.session === ""
           ? pastQuestion?.session?.includes("")
-          : pastQuestion?.session === filters?.session) &&
+          : pastQuestion?.session === queryParameters?.session) &&
         (pastQuestion?.courseTitle
           ?.toLowerCase()
-          ?.includes(filters?.search?.toLowerCase()) ||
+          ?.includes(queryParameters?.search?.toLowerCase()) ||
           pastQuestion?.courseCode
             ?.toLowerCase()
-            ?.includes(filters?.search?.toLowerCase()) ||
+            ?.includes(queryParameters?.search?.toLowerCase()) ||
           pastQuestion?.departments
             ?.join(",")
             ?.toLowerCase()
-            ?.includes(filters?.search?.toLowerCase()) ||
-          pastQuestion?.session?.includes(filters?.search))
+            ?.includes(queryParameters?.search?.toLowerCase()) ||
+          pastQuestion?.session?.includes(queryParameters?.search))
     );
 
     setPagination((prev) => ({
@@ -118,7 +116,7 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
       pages: Math.ceil(list?.length / prev?.pageLength),
     }));
     return list;
-  }, [allPastQuestions, filters]);
+  }, [allPastQuestions, queryParameters]);
 
   //** END PAGINATION AND LIST FILTER */
 
@@ -126,6 +124,31 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
     let sessions = allPastQuestions?.map((pq) => pq?.session);
     setAllSessions(Array.from(new Set(sessions)));
   }, [allPastQuestions]);
+
+  useEffect(() => {
+    setQueryParameters({
+      department: router.query.department ?? "",
+      level: router.query.level ?? "",
+      search: router.query.search ?? "",
+      session: router.query.session ?? "",
+    });
+    setFilters({
+      department: router.query.department ?? "",
+      level: router.query.level ?? "",
+      search: router.query.search ?? "",
+      session: router.query.session ?? "",
+    });
+  }, [router.query]);
+
+  const onFilter = (params) => {
+    const query = `?${params.department && `department=${params.department}&`}${
+      params.level && `level=${params.level}&`
+    }${params.search && `search=${params.search}&`}${
+      params.session && `session=${params.session}&`
+    }`;
+
+    router.push(`/past-questions${query}`);
+  };
 
   return (
     <div className="h-fit flex flex-col">
@@ -155,694 +178,52 @@ const PastQuestions = ({ allPastQuestions, allDepartments }) => {
 
       <main className="w-full flex flex-col gap-8 px-4 sm:px-8 md:px-16 py-8 items-center">
         <section className="max-w-[750px] w-full">
-          <form action="" className="w-full flex items-center">
-            <input
-              className="flex-grow h-full px-4 sm:px-8 py-3 text-gray-500 rounded-l-lg outline-none border-none shadow-lg duration-200 scale-y-110"
-              type="text"
-              placeholder="Search Module..."
-              value={search}
-              onChange={(e) => setSearch(() => e.target.value)}
-            />
-            <button
-              className="h-full bg-green-600 text-white rounded-r-lg py-3 px-4 sm:px-8 hover:bg-green-800 duration-300 flex gap-4 items-center"
-              onClick={(e) => {
-                e.preventDefault();
-                setFilters({ search: search });
-              }}
-            >
-              <span className="hidden sm:block">Search</span> <BsSearch />{" "}
-            </button>
-          </form>
+          <SearchBox
+            search={search}
+            setSearch={setSearch}
+            filters={filters}
+            setFilters={setFilters}
+            onSubmit={onFilter}
+          />
           {/* <InfeedsAd /> */}
         </section>
         <Container>
           <section className="w-full flex flex-col lg:flex-row gap-4 md:gap-8 lg:gap-12 ">
-            <div className="flex flex-col lg:hidden">
-              <button
-                className="w-fit px-4 py-2 rounded-sm border border-gray-200 flex bg-gray-50 items-center gap-2 lg:hidden"
-                onClick={() => setFiltersOpen((prev) => !prev)}
-              >
-                <span>{`(${filteredList?.length})`}</span> Filters{" "}
-                <ImEqualizer />
-              </button>
-              <div
-                className={`overflow-hidden ${filtersOpen ? "h-full" : "h-0"}`}
-              >
-                {allDepartments?.length > 0 && (
-                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                    <div
-                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                      onClick={() => toggleMenu("department")}
-                    >
-                      Department{" "}
-                      <span className="text-sm text-gray-400 capitalize">
-                        {filters?.department !== ""
-                          ? `(${filters?.department})`
-                          : ""}
-                      </span>
-                      <span
-                        className={`duration-300 text-2xl ${
-                          activeMenu === "department"
-                            ? "rotate-180 text-gray-700"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        <BiChevronDown />
-                      </span>
-                    </div>
-                    <div
-                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                        activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
-                      }`}
-                    >
-                      <div
-                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                          filters?.department === ""
-                            ? "text-gray-700 font-semibold"
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          toggleMenu("department");
-                          setFilters({
-                            department: "",
-                          });
-                        }}
-                      >
-                        All Departments
-                      </div>
-                      {allDepartments?.map((dept) => (
-                        <div
-                          key={dept?._id}
-                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                            filters?.department === dept?.value
-                              ? "text-gray-700 font-semibold"
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            toggleMenu("department");
-                            setFilters({
-                              department: dept?.value?.toLowerCase(),
-                            });
-                          }}
-                        >
-                          {dept?.title}
-                        </div>
-                      ))}
-                      {/* <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "business administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Business Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "economics"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Economics
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "public administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      Public Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("department");
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        });
-                      }}
-                    >
-                      General
-                    </div> */}
-                    </div>
-                  </div>
-                )}
+            <MobileFilters
+              allDepartments={allDepartments}
+              filteredList={filteredList}
+              filters={filters}
+              setFilters={setFilters}
+              onSubmit={onFilter}
+              allSessions={allSessions}
+              isPastQuestions
+            />
 
-                <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                  <div
-                    className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                    onClick={() => toggleMenu("level")}
-                  >
-                    Level{" "}
-                    <span className="text-sm text-gray-400 capitalize">
-                      {filters?.level !== "" ? `(${filters?.level})` : ""}
-                    </span>
-                    <span
-                      className={`duration-300 text-2xl ${
-                        activeMenu === "level"
-                          ? "rotate-180 text-gray-700"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <BiChevronDown />
-                    </span>
-                  </div>
-                  <div
-                    className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                      activeMenu === "level" ? "h-fit pt-3" : "h-0 pt-0"
-                    }`}
-                  >
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === ""
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "",
-                        });
-                      }}
-                    >
-                      All Levels
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "100"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "100",
-                        });
-                      }}
-                    >
-                      100 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "200"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "200",
-                        });
-                      }}
-                    >
-                      200 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "300"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "300",
-                        });
-                      }}
-                    >
-                      300 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "400"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "400",
-                        });
-                      }}
-                    >
-                      400 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "500"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "500",
-                        });
-                      }}
-                    >
-                      500 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        toggleMenu("level");
-                        setFilters({
-                          level: "general",
-                        });
-                      }}
-                    >
-                      General
-                    </div>
-                  </div>
-                </div>
-
-                {allSessions?.length > 0 && (
-                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                    <div
-                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                      onClick={() => toggleMenu("session")}
-                    >
-                      Session{" "}
-                      <span className="text-sm text-gray-400 capitalize">
-                        {filters?.session !== "" ? `(${filters?.session})` : ""}
-                      </span>
-                      <span
-                        className={`duration-300 text-2xl ${
-                          activeMenu === "session"
-                            ? "rotate-180 text-gray-700"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        <BiChevronDown />
-                      </span>
-                    </div>
-                    <div
-                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                        activeMenu === "session" ? "h-fit pt-3" : "h-0 pt-0"
-                      }`}
-                    >
-                      <div
-                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                          filters?.session === ""
-                            ? "text-gray-700 font-semibold"
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          toggleMenu("session");
-                          setFilters({
-                            session: "",
-                          });
-                        }}
-                      >
-                        All Sessions
-                      </div>
-                      {allSessions?.map((sess) => (
-                        <div
-                          key={sess}
-                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                            filters?.session === sess
-                              ? "text-gray-700 font-semibold"
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            toggleMenu("session");
-                            setFilters({
-                              session: sess,
-                            });
-                          }}
-                        >
-                          {sess}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div
-              className={`w-[280px] hidden duration-300 lg:flex flex-col gap-4 -translate-x-[1000px] lg:translate-x-0`}
-            >
-              <div className="hidden lg:flex items-center font-semibold gap-3 font-montserrat">
-                Filters <ImEqualizer />
-              </div>
-
-              <div>
-                {allDepartments?.length > 0 && (
-                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                    <div
-                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                      onClick={() => toggleMenu("department")}
-                    >
-                      Department{" "}
-                      <span
-                        className={`duration-300 text-2xl ${
-                          activeMenu === "department"
-                            ? "rotate-180 text-gray-700"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        <BiChevronDown />
-                      </span>
-                    </div>
-                    <div
-                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                        activeMenu === "department" ? "h-fit pt-3" : "h-0 pt-0"
-                      }`}
-                    >
-                      <div
-                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                          filters?.department === ""
-                            ? "text-gray-700 font-semibold"
-                            : ""
-                        }`}
-                        onClick={(e) =>
-                          setFilters({
-                            department: "",
-                          })
-                        }
-                      >
-                        All Departments
-                      </div>
-                      {allDepartments?.map((dept) => (
-                        <div
-                          key={dept?._id}
-                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                            filters?.department === dept?.value
-                              ? "text-gray-700 font-semibold"
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            toggleMenu("department");
-                            setFilters({
-                              department: dept?.value?.toLowerCase(),
-                            });
-                          }}
-                        >
-                          {dept?.title}
-                        </div>
-                      ))}
-                      {/* <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "accounting"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Accounting
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "business administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Business Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "economics"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Economics
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "public administration"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      Public Administration
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.department === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          department: e.target?.innerText?.toLowerCase(),
-                        })
-                      }
-                    >
-                      General
-                    </div> */}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                  <div
-                    className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                    onClick={() => toggleMenu("level")}
-                  >
-                    Level{" "}
-                    <span
-                      className={`duration-300 text-2xl ${
-                        activeMenu === "level"
-                          ? "rotate-180 text-gray-700"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <BiChevronDown />
-                    </span>
-                  </div>
-                  <div
-                    className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                      activeMenu === "level" ? "h-fit pt-3" : "h-0 pt-0"
-                    }`}
-                  >
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === ""
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "",
-                        })
-                      }
-                    >
-                      All Levels
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "100"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "100",
-                        })
-                      }
-                    >
-                      100 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "200"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "200",
-                        })
-                      }
-                    >
-                      200 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "300"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "300",
-                        })
-                      }
-                    >
-                      300 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "400"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "400",
-                        })
-                      }
-                    >
-                      400 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "500"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "500",
-                        })
-                      }
-                    >
-                      500 Level
-                    </div>
-                    <div
-                      className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                        filters?.level === "general"
-                          ? "text-gray-700 font-semibold"
-                          : ""
-                      }`}
-                      onClick={(e) =>
-                        setFilters({
-                          level: "general",
-                        })
-                      }
-                    >
-                      General
-                    </div>
-                  </div>
-                </div>
-
-                {allSessions?.length > 0 && (
-                  <div className="flex flex-col py-5 px-2 border-b border-b-gray-300">
-                    <div
-                      className="flex font-semibold text-gray-700 items-center justify-between cursor-pointer hover:font-semibold duration-300"
-                      onClick={() => toggleMenu("session")}
-                    >
-                      Session{" "}
-                      <span className="text-sm text-gray-400 capitalize">
-                        {filters?.session !== "" ? `(${filters?.session})` : ""}
-                      </span>
-                      <span
-                        className={`duration-300 text-2xl ${
-                          activeMenu === "session"
-                            ? "rotate-180 text-gray-700"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        <BiChevronDown />
-                      </span>
-                    </div>
-                    <div
-                      className={`duration-300 overflow-hidden px-4 flex flex-col gap-2 font-normal text-gray-400 ${
-                        activeMenu === "session" ? "h-fit pt-3" : "h-0 pt-0"
-                      }`}
-                    >
-                      <div
-                        className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                          filters?.session === ""
-                            ? "text-gray-700 font-semibold"
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          toggleMenu("session");
-                          setFilters({
-                            session: "",
-                          });
-                        }}
-                      >
-                        All Sessions
-                      </div>
-                      {allSessions?.map((sess) => (
-                        <div
-                          key={sess}
-                          className={`hover:text-gray-700 duration-300 cursor-pointer ${
-                            filters?.session === sess
-                              ? "text-gray-700 font-semibold"
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            toggleMenu("session");
-                            setFilters({
-                              session: sess,
-                            });
-                          }}
-                        >
-                          {sess}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <DesktopFilters
+              allDepartments={allDepartments}
+              filters={filters}
+              setFilters={setFilters}
+              onSubmit={onFilter}
+              allSessions={allSessions}
+              isPastQuestions
+            />
 
             <div className="flex-grow flex flex-col">
               <>
-                {(filters?.department !== "" ||
-                  filters?.level !== "" ||
-                  filters?.search !== "" ||
-                  filters?.session !== "") && (
+                {(queryParameters?.department !== "" ||
+                  queryParameters?.level !== "" ||
+                  queryParameters?.search !== "" ||
+                  queryParameters?.session !== "") && (
                   <div className="mb-2 flex text-sm text-gray-700 text-opacity-80 items-center">
                     Showing results for{" "}
-                    {filters?.department &&
-                      `${filters?.department} department, `}
-                    {filters?.level && `${filters?.level} level, `}
-                    {filters?.session && `${filters?.session}, session`}
-                    {filters?.search && `keyword: ${filters?.search}.`}
+                    {queryParameters?.department &&
+                      `${queryParameters?.department} department, `}
+                    {queryParameters?.level &&
+                      `${queryParameters?.level} level, `}
+                    {queryParameters?.session &&
+                      `${queryParameters?.session} session, `}
+                    {queryParameters?.search &&
+                      `keyword: ${queryParameters?.search}.`}
                     <span>
                       <button
                         className="border border-gray-100 sm:ml-4 px-2 py-1 text-gray-600 flex gap-1 text-sm font-semibold items-center duration-500 hover:text-gray-100 hover:bg-gray-800 rounded"
