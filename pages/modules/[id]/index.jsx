@@ -4,13 +4,7 @@ import axios from "axios";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BsCloudDownload } from "react-icons/bs";
 import { FaHandPointRight, FaHeart, FaLink } from "react-icons/fa";
 import Banner from "../../../components/Banner/Banner";
@@ -20,7 +14,6 @@ import { BASE_URL, CLIENT_ORIGIN } from "../../../constants/variables";
 import addFavorites from "../../../globalFunctions/addBookToFavorites";
 import copyLink from "../../../globalFunctions/copyModuleLink";
 import { useAuthContext } from "../../context/authContext";
-// import { useLoginModalContext } from "../../context/loginModalContext";
 import { useSession } from "next-auth/react";
 import Container from "../../../components/Container/Container";
 import Link from "next/link";
@@ -57,7 +50,6 @@ const SingleModulePage = () => {
         const moduleDetailsResponse = await axios.get(
           `${BASE_URL}/modules/get-single-module/${id}`
         );
-        // const moduleResponse = await axios.get(`${BASE_URL}/modules/${id}`);
 
         await fetch(`${BASE_URL}/modules/${id}`)
           .then((res) =>
@@ -80,17 +72,13 @@ const SingleModulePage = () => {
       } catch (error) {
         setFetchStatus("failed");
       }
-
-      // const fileURL = window.URL.createObjectURL(moduleResponse?.data);
     };
 
     const fetchResources = async () => {
-      // const departmentResponse = await axios.get(`${BASE_URL}/departments`);
       const pastQuestionsResponse = await axios.get(
         `${BASE_URL}/past-questions/get-past-questions-by-course-id/${id}`
       );
 
-      // setDepartments(departmentResponse?.data);
       setPastQuestions(pastQuestionsResponse?.data);
     };
 
@@ -102,8 +90,6 @@ const SingleModulePage = () => {
 
   const downloadBook = async (id) => {
     setDownloading(true);
-
-    // console.log({ book, error, status, message });
 
     if (module) {
       setDownloading(false);
@@ -285,7 +271,7 @@ const SingleModulePage = () => {
                       Viewing Pages 1 - 3 of{" "}
                       {`(${moduleDetails?.courseCode}) ${moduleDetails?.courseTitle}`}
                     </div>
-                    <div className="w-full min-h-fit">
+                    <div className="w-full max-w-[900px] ">
                       <DocumentViewer file={module} />
                     </div>
                   </div>
