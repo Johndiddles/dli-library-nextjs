@@ -4,13 +4,13 @@ import { Document, Page, pdfjs } from "react-pdf/dist/esm/entry.webpack";
 pdfjs.GlobalWorkerOptions.workerSrc =
   "//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.js";
 
-const DocumentViewer = ({ file }) => {
+const DocumentViewer = ({ file, fileType }) => {
   const [base64Pdf, setBase64Pdf] = useState("");
 
-  const [numPages, setNumPages] = useState(null);
+  const [numOfPages, setNumOfPages] = useState(null);
 
-  function onDocumentLoadSuccess({ numPages: nextNumPages }) {
-    setNumPages(nextNumPages);
+  function onDocumentLoadSuccess({ numPages: nextNumOfPages }) {
+    setNumOfPages(nextNumOfPages);
   }
 
   useEffect(() => {
@@ -38,14 +38,17 @@ const DocumentViewer = ({ file }) => {
         onLoadSuccess={onDocumentLoadSuccess}
         // onLoadError={(error) => console.log({ error })}
       >
-        {Array.from({ length: 3 }, (_, index) => (
-          <Page
-            key={`page_${index + 1}`}
-            pageNumber={index + 1}
-            renderAnnotationLayer={false}
-            renderTextLayer={false}
-          />
-        ))}
+        {Array.from(
+          { length: fileType !== "pastQuestions" ? 3 : numOfPages },
+          (_, index) => (
+            <Page
+              key={`page_${index + 1}`}
+              pageNumber={index + 1}
+              renderAnnotationLayer={false}
+              renderTextLayer={false}
+            />
+          )
+        )}
       </Document>
     </div>
   );

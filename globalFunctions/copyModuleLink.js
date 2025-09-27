@@ -1,9 +1,9 @@
 import { toast } from "react-toastify";
 
-const copyLink = async (id, bookName) => {
+const copyLink = async (id, title, type) => {
   try {
-    navigator.clipboard.writeText(`${window.location.origin}/modules/${id}`);
-    toast.success(`Copied link to ${bookName}`);
+    navigator.clipboard.writeText(`${window.location.origin}/${type}/${id}`);
+    toast.success(`Copied link to ${title}`);
   } catch (error) {
     toast.error("Unable to copy link");
   }

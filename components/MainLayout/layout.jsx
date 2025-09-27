@@ -6,20 +6,24 @@ import AuthContextProvider from "../../pages/context/authContext";
 import LoginModalContextProvider, {
   useLoginModalContext,
 } from "../../pages/context/loginModalContext";
+import { SessionProvider } from "next-auth/react";
+// import InFeedsAd from "../GoogleAds/InFeedsAd";
 
 const MainLayout = ({ children }) => {
-  // const { isModalOpen } = useLoginModalContext();
   return (
     <div className="flex flex-col justify-between min-h-screen">
-      <AuthContextProvider>
-        <LoginModalContextProvider>
-          <Suspense fallback={<LoadingScreen />}>
-            <Header />
-            {children}
-            <Footer />
-          </Suspense>
-        </LoginModalContextProvider>
-      </AuthContextProvider>
+      <SessionProvider>
+        <AuthContextProvider>
+          <LoginModalContextProvider>
+            <Suspense fallback={<LoadingScreen />}>
+              <Header />
+              {children}
+              {/* <InfeedsAd /> */}
+              <Footer />
+            </Suspense>
+          </LoginModalContextProvider>
+        </AuthContextProvider>
+      </SessionProvider>
     </div>
   );
 };

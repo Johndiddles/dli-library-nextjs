@@ -3,17 +3,19 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Banner from "../components/Banner/Banner";
 import SignupForm from "../components/SignUp/SignupForm";
-import { useAuthContext } from "./context/authContext";
+// import { useAuthContext } from "./context/authContext";
+import { useSession } from "next-auth/react";
 
 const SignUp = () => {
+  const { data: session } = useSession();
   const router = useRouter();
-  const { isAuth } = useAuthContext();
+  // const { isAuth } = useAuthContext();
 
   useEffect(() => {
-    if (isAuth) {
+    if (session) {
       router.push("/modules");
     }
-  }, [isAuth, router]);
+  }, [router, session]);
   return (
     <div>
       <Head>
@@ -31,7 +33,7 @@ const SignUp = () => {
             imgUrl="https://images.unsplash.com/photo-1596670945993-7854448e5f38?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
           />
 
-          {!isAuth && (
+          {!session && (
             <section>
               <div className="w-full flex justify-center items-center px-8 py-14">
                 <div className="w-full max-w-[600px]">

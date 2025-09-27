@@ -67,3 +67,53 @@
     }
   }
 }
+
+.departments {
+  &__table {
+    &__row {
+      grid-template-columns: 50px 1fr 1fr;
+      text-transform: initial;
+
+      td {
+        text-transform: initial !important;
+      }
+    }
+  }
+}
+
+.pastQuestions {
+  &__table {
+    &__row {
+      grid-template-columns:
+        50px minmax(50px, 150px)
+        minmax(70px, 1fr) minmax(50px, 1fr) minmax(50px, 200px) minmax(
+          70px,
+          200px
+        )
+        minmax(70px, 1fr)
+        minmax(50px, 100px);
+      text-transform: initial;
+
+      td {
+        text-transform: capitalize !important;
+      }
+    }
+  }
+}
+
+.support {
+  &__table {
+    &__row {
+      grid-template-columns:
+        50px minmax(50px, 150px)
+        minmax(50px, 1fr) minmax(150px, 1fr) minmax(50px, 200px);
+    }
+    &__contact_info {
+      text-transform: lowercase !important;
+    }
+
+    &__contact_message {
+      text-transform: none !important;
+    }
+  }
+}

@@ -15,9 +15,8 @@ const Footer = () => {
             DLI Library
           </div>
           <FooterLink name="Home" href="/" />
-          <FooterLink name="Contact Us" href="/" />
-          <FooterLink name="About Dli Library" href="/about" />
-          <FooterLink name="Download Modules" href="/modules" />
+          <FooterLink name="Modules" href="/modules" />
+          <FooterLink name="Past Questions" href="/past-questions" />
         </div>
         <div className="flex flex-col gap-4 text-left">
           <div
@@ -28,8 +27,10 @@ const Footer = () => {
           >
             What you need to know
           </div>
-          <FooterLink name="Terms of Use" href="/" />
-          <FooterLink name="Privacy Policy" href="/" />
+          <FooterLink name="Contact Us" href="/contact" />
+          <FooterLink name="About Dli Library" href="/about" />
+          {/* <FooterLink name="Terms of Use" href="/" />
+          <FooterLink name="Privacy Policy" href="/" /> */}
         </div>
       </div>
 

@@ -10,15 +10,19 @@ import moment from "moment";
 import ButtonSpinner from "../Loader/ButtonSpinner";
 import { useRouter } from "next/router";
 import copyLink from "../../globalFunctions/copyModuleLink";
-import { useLoginModalContext } from "../../pages/context/loginModalContext";
+// import { useLoginModalContext } from "../../pages/context/loginModalContext";
 import { useAuthContext } from "../../pages/context/authContext";
 import addFavorites from "../../globalFunctions/addBookToFavorites";
+import { useSession } from "next-auth/react";
+import { CLIENT_ORIGIN } from "../../constants/variables";
+import Tooltip from "../Tooltip/Tooltip";
 
 const SingleModule = ({ module }) => {
+  const { data: session } = useSession();
   const router = useRouter();
-  const { isAuth, verifyUser, user } = useAuthContext();
-  const { favorite_modules } = user;
-  const { setIsModalOpen } = useLoginModalContext();
+  const { verifyUser, favorite_modules } = useAuthContext();
+  // const { favorite_modules } = user;
+  // const { setIsModalOpen } = useLoginModalContext();
   const [downloading, setDownloading] = useState(false);
   const downloadBook = async (id) => {
     setDownloading(true);
@@ -44,31 +48,30 @@ const SingleModule = ({ module }) => {
 
   const addBookToFavorites = useCallback(() => {
     const action = async () => {
-      const response = await addFavorites(module?.id);
+      const response = await addFavorites(module?.id, session.user.token);
 
       if (response?.message === "success") {
         verifyUser();
       } else if (response?.message === "unauthorized") {
-        setIsModalOpen((prev) => !prev);
+        router.push(`${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules`);
       } else {
       }
     };
 
     return action();
-  }, [verifyUser, module?.id, setIsModalOpen]);
+  }, [verifyUser, module?.id, router, session?.user?.token]);
 
   const addToFavorites = (e) => {
     e.preventDefault();
-    if (isAuth) {
+    if (session) {
       addBookToFavorites();
     } else {
-      setIsModalOpen(true);
+      router.push(`${CLIENT_ORIGIN}/api/auth/signin?callbackUrl=/modules`);
     }
   };
 
   return (
     <div
-      //   href={`/modules/${module?.id}`}
       className={`w-full bg-white rounded-md duration-300 cursor-pointer hover:-translate-y-1 ${styles.singleModuleWrapper}`}
       style={{
         boxShadow: "0px 1px 6px rgba(0,0,0,0.05)",
@@ -84,7 +87,7 @@ const SingleModule = ({ module }) => {
           className={`overflow-hidden rounded-t-lg ${styles.singleModule__image}`}
         >
           <Image
-            src={module?.thumbnail}
+            src={module?.thumbnail?.split("http").join("https")}
             alt="module"
             style={{
               objectFit: "cover",
@@ -99,7 +102,8 @@ const SingleModule = ({ module }) => {
               <div>{module?.courseCode}</div> <div>{module?.courseTitle}</div>
             </div>
             <div className="text-xs font-semibold font-montserrat text-gray-400">
-              {module?.department}, {`${module?.level} level`}
+              {module?.department?.split(",")?.join(", ")},{" "}
+              {`${module?.level} level`}
             </div>
           </div>
 
@@ -110,25 +114,42 @@ const SingleModule = ({ module }) => {
               className={`flex flex-col ${styles.singleModule__actions__fav}`}
             >
               <div className="flex gap-4 justify-end text-xl mb-2 ">
-                <button
-                  className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
-                  onClick={() => {
-                    copyLink(module?.id, module?.courseTitle);
-                  }}
-                >
-                  <FaLink />
-                </button>
-                <span className="border-l border-l-gray-200"></span>
-                <button
-                  className={`outline-none cursor-pointer duration-300 ${
-                    isModuleFavorite
-                      ? "text-green-600 hover:text-red-700"
-                      : "text-gray-400 hover:text-green-600"
-                  } `}
-                  onClick={addToFavorites}
-                >
-                  <FaHeart />
-                </button>
+                <Tooltip
+                  button={
+                    <button
+                      aria-label="copy link"
+                      className="outline-none cursor-pointer duration-300 text-base text-gray-400 hover:text-green-600"
+                      onClick={() => {
+                        copyLink(module?.id, module?.courseTitle, "modules");
+                      }}
+                    >
+                      <FaLink />
+                    </button>
+                  }
+                  tooltiptext="copy link to module"
+                />
+
+                {!router.pathname?.includes("favourite-modules") && (
+                  <>
+                    <span className="border-l border-l-gray-200"></span>
+                    <Tooltip
+                      button={
+                        <button
+                          aria-label="like module"
+                          className={`outline-none cursor-pointer duration-300 ${
+                            isModuleFavorite
+                              ? "text-green-600 hover:text-red-700"
+                              : "text-gray-400 hover:text-green-600"
+                          } `}
+                          onClick={addToFavorites}
+                        >
+                          <FaHeart />
+                        </button>
+                      }
+                      tooltiptext="Like"
+                    />
+                  </>
+                )}
               </div>
               <div className="text-xs text-gray-400 text-center mb-2">
                 Date Added: {moment(module?.date).format("DD MMM YYYY")}

@@ -5,11 +5,15 @@ import { axiosInstance } from "../../../globalFunctions/axiosInstance";
 import styles from "../../../styles/Table.module.scss";
 
 import spinner from "../../../assets/spinner.svg";
+import { BsSearch } from "react-icons/bs";
 import Spinner from "../../Loader/Spinner";
+import Link from "next/link";
+import { FaPlus } from "react-icons/fa";
 
 const ModulesTable = () => {
   const [fetchStatus, setFetchStatus] = useState("idle");
   const [modules, setModules] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -43,32 +47,65 @@ const ModulesTable = () => {
       );
     }
     if (fetchStatus === "success" && modules.length > 0) {
-      return modules.map((module, index) => (
-        <tr
-          key={module?.id}
-          className={`${styles.table__row} ${styles.modules__table__row}`}
-        >
-          <td>{index + 1}</td>
-          <td>{module?.courseCode}</td>
-          <td>{module?.courseTitle}</td>
-          <td>{module?.department}</td>
-          <td>{module?.level}</td>
-          <td>
-            <button className="py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold">
-              Edit
-            </button>
-          </td>
-        </tr>
-      ));
+      return modules
+        ?.filter(
+          (module) =>
+            module.courseCode?.toLowerCase()?.includes(search?.toLowerCase()) ||
+            module?.courseTitle
+              ?.toLowerCase()
+              ?.includes(search?.toLowerCase()) ||
+            module?.department?.toLowerCase()?.includes(search?.toLowerCase())
+        )
+        .map((module, index) => (
+          <tr
+            key={module?.id}
+            className={`${styles.table__row} ${styles.modules__table__row}`}
+          >
+            <td>{index + 1}</td>
+            <td>{module?.courseCode}</td>
+            <td>{module?.courseTitle}</td>
+            <td>{module?.department?.split(",")?.join(", ")}</td>
+            <td>{module?.level}</td>
+            <td>
+              <Link
+                href={`/admin/dashboard/edit-module?moduleId=${module.id}`}
+                className="my-2 py-[6px] px-4 bg-gray-700 text-gray-300 rounded text-sm shadow-lg duration-300 hover:bg-gray-900 hover:text-gray-100 font-semibold"
+              >
+                Edit
+              </Link>
+            </td>
+          </tr>
+        ));
     }
-  }, [fetchStatus, modules]);
+  }, [fetchStatus, modules, search]);
 
   return (
     <div className={`w-full`}>
-      <div className="bg-white px-4 py-4 rounded-t-2xl">
+      <div className="bg-white px-4 py-4 rounded-t-2xl flex justify-between items-center">
         <h4 className="font-bold text-lg font-montserrat text-slate-800">
           All Modules
         </h4>
+
+        <div className="flex gap-4 items-center ">
+          <div className="border border-gray-200 py-1 px-2 flex gap-2 rounded-lg items-center text-gray-500">
+            <BsSearch />
+            <input
+              type="text"
+              placeholder="search modules..."
+              className=" outline-none "
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <Link
+            href="/admin/dashboard/add-module"
+            className="flex items-center gap-2 bg-gray-700 text-gray-300 hover:bg-gray-900 hover:text-gray-100 duration-300 font-semibold text-sm py-2 px-4 rounded"
+          >
+            <FaPlus />
+            Add Module
+          </Link>
+        </div>
       </div>
       <table className={`${styles.table}`}>
         <thead className={`${styles.table__head}`}>

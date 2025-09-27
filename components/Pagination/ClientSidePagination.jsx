@@ -32,6 +32,7 @@ const ClientSidePagination = ({
       </div>
       <div className="flex items-center gap-4">
         <button
+          aria-label="previous"
           onClick={handlePrev}
           className={`text-2xl ${
             pagination?.page === 1
@@ -46,6 +47,7 @@ const ClientSidePagination = ({
           {pagination?.page}
         </span>
         <button
+          aria-label="next"
           onClick={handleNext}
           className={`text-2xl ${
             pagination?.page === pagination?.pages

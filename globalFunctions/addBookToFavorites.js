@@ -2,16 +2,16 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../constants/variables";
 
-const addFavorites = async (id) => {
+const addFavorites = async (id, token) => {
   let returnMessage;
 
   try {
     const response = await axios.post(
-      `${BASE_URL}/add-to-favorites`,
+      `${BASE_URL}/user/add-to-favorites`,
       { id },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
